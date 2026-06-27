@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Osteopathie Waiblingen | OSTEA - Sonja Hoffmann</title>
+    <meta name="description" content="OSTEA Praxis f&uuml;r Osteopathie in Waiblingen. Osteopathische Behandlung f&uuml;r Erwachsene, Schwangere, Babys und Kinder bei Sonja Hoffmann. Jetzt Termin buchen.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.ostea.de/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="de_DE">
+    <meta property="og:title" content="Osteopathie Waiblingen | OSTEA - Sonja Hoffmann">
+    <meta property="og:description" content="Osteopathie in Waiblingen f&uuml;r Erwachsene, Schwangere, Babys und Kinder. Termine online buchen.">
+    <meta property="og:image" content="assets/praxis-ostea-waiblingen.jpg">
+    <meta property="og:url" content="https://www.ostea.de/">
+    <meta name="theme-color" content="#446f70">
+    <style>
+      :root {
+        --ink: #172426;
+        --muted: #526466;
+        --line: #dbe4df;
+        --paper: #fbfaf6;
+        --white: #ffffff;
+        --mist: #ecf5f3;
+        --sage: #88a99d;
+        --teal: #446f70;
+        --navy: #102f54;
+        --clay: #bf7862;
+        --shadow: 0 18px 48px rgba(23, 36, 38, 0.12);
+        --radius: 8px;
+        --max: 1180px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.65;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .skip-link {
+        position: absolute;
+        left: 16px;
+        top: -120px;
+        z-index: 100;
+        background: var(--navy);
+        color: var(--white);
+        padding: 10px 14px;
+        text-decoration: none;
+        border-radius: 4px;
+      }
+
+      .skip-link:focus {
+        top: 16px;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: rgba(251, 250, 246, 0.96);
+        border-bottom: 1px solid rgba(219, 228, 223, 0.85);
+        backdrop-filter: blur(14px);
+      }
+
+      .nav {
+        width: min(100% - 32px, var(--max));
+        min-height: 76px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        min-width: 0;
+      }
+
+      .brand img {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: 1px solid rgba(16, 47, 84, 0.16);
+      }
+
+      .brand strong,
+      .brand span {
+        display: block;
+      }
+
+      .brand strong {
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+      }
+
+      .brand span {
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.25;
+      }
+
+      .nav-toggle {
+        display: none;
+      }
+
+      .nav-toggle-label {
+        display: none;
+        width: 44px;
+        height: 44px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .nav-toggle-label span,
+      .nav-toggle-label span::before,
+      .nav-toggle-label span::after {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: var(--ink);
+        content: "";
+      }
+
+      .nav-toggle-label span::before {
+        transform: translateY(-7px);
+      }
+
+      .nav-toggle-label span::after {
+        transform: translateY(5px);
+      }
+
+      nav ul {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      nav a {
+        color: var(--muted);
+        font-size: 0.93rem;
+        text-decoration: none;
+      }
+
+      nav a:hover,
+      nav a:focus {
+        color: var(--ink);
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 46px;
+        padding: 12px 18px;
+        color: var(--white);
+        background: var(--teal);
+        border: 1px solid var(--teal);
+        border-radius: 6px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 160ms ease, background 160ms ease;
+      }
+
+      .button:hover,
+      .button:focus {
+        background: var(--navy);
+        transform: translateY(-1px);
+      }
+
+      .button.secondary {
+        color: var(--teal);
+        background: transparent;
+        border-color: rgba(68, 111, 112, 0.4);
+      }
+
+      .button.secondary:hover,
+      .button.secondary:focus {
+        color: var(--white);
+        background: var(--teal);
+      }
+
+      .hero {
+        width: min(100% - 32px, var(--max));
+        margin: 16px auto 0;
+        padding: 14px 0 48px;
+        display: grid;
+        grid-template-columns: minmax(0, 0.98fr) minmax(340px, 1.02fr);
+        min-height: calc(100vh - 104px);
+        gap: 36px;
+        align-items: center;
+      }
+
+      .eyebrow {
+        margin: 0 0 14px;
+        color: var(--clay);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.15;
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 780px;
+        font-size: clamp(2.2rem, 4.3vw, 3.35rem);
+      }
+
+      h2 {
+        font-size: clamp(1.8rem, 4vw, 3.05rem);
+      }
+
+      h3 {
+        font-size: 1.22rem;
+      }
+
+      .lead {
+        margin: 18px 0 0;
+        max-width: 680px;
+        color: var(--muted);
+        font-size: clamp(1.05rem, 2vw, 1.28rem);
+      }
+
+      .hero-actions,
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .meta-line {
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .hero-media {
+        position: relative;
+      }
+
+      .hero-media img {
+        width: 100%;
+        min-height: 500px;
+        max-height: 72vh;
+        object-fit: cover;
+        object-position: center;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .notice {
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        max-width: 280px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: 0 10px 32px rgba(23, 36, 38, 0.14);
+      }
+
+      .notice strong,
+      .notice span {
+        display: block;
+      }
+
+      .notice strong {
+        color: var(--teal);
+        margin-bottom: 4px;
+      }
+
+      .notice span {
+        color: var(--muted);
+        font-size: 0.94rem;
+        line-height: 1.45;
+      }
+
+      section {
+        padding: 84px 0;
+      }
+
+      .section-inner {
+        width: min(100% - 32px, var(--max));
+        margin: 0 auto;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 0.8fr) minmax(280px, 0.62fr);
+        gap: 40px;
+        align-items: end;
+        margin-bottom: 36px;
+      }
+
+      .section-head p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .band {
+        background: var(--mist);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        min-height: 100%;
+        padding: 24px;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      .card p,
+      .split p,
+      .legal p,
+      .faq p {
+        color: var(--muted);
+      }
+
+      .card p:last-child,
+      .split p:last-child {
+        margin-bottom: 0;
+      }
+
+      .kicker {
+        display: inline-block;
+        margin-bottom: 12px;
+        color: var(--teal);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 0.92fr) minmax(320px, 1.08fr);
+        gap: 44px;
+        align-items: center;
+      }
+
+      .split.reverse {
+        grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
+      }
+
+      .portrait,
+      .soft-image {
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .portrait {
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+      }
+
+      .soft-image {
+        width: 100%;
+        aspect-ratio: 5 / 4;
+        object-fit: cover;
+      }
+
+      .list {
+        display: grid;
+        gap: 12px;
+        padding: 0;
+        margin: 24px 0 0;
+        list-style: none;
+      }
+
+      .list li {
+        position: relative;
+        padding-left: 24px;
+        color: var(--muted);
+      }
+
+      .list li::before {
+        position: absolute;
+        left: 0;
+        top: 0.68em;
+        width: 8px;
+        height: 8px;
+        background: var(--sage);
+        border-radius: 50%;
+        content: "";
+      }
+
+      .facts {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1px;
+        margin-top: 34px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--line);
+      }
+
+      .fact {
+        min-height: 124px;
+        padding: 20px;
+        background: var(--white);
+      }
+
+      .fact strong {
+        display: block;
+        color: var(--navy);
+        font-size: 1.5rem;
+        line-height: 1;
+      }
+
+      .fact span {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.35;
+      }
+
+      .process {
+        counter-reset: process;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .process .card {
+        position: relative;
+        padding-top: 58px;
+      }
+
+      .process .card::before {
+        counter-increment: process;
+        content: "0" counter(process);
+        position: absolute;
+        left: 24px;
+        top: 22px;
+        color: var(--clay);
+        font-weight: 800;
+      }
+
+      .faq {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 14px;
+      }
+
+      details {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      summary {
+        cursor: pointer;
+        padding: 18px 20px;
+        font-weight: 800;
+      }
+
+      details p {
+        margin: 0;
+        padding: 0 20px 20px;
+      }
+
+      .contact {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .contact-panel {
+        padding: 28px;
+        background: var(--navy);
+        color: var(--white);
+        border-radius: var(--radius);
+      }
+
+      .contact-panel p,
+      .contact-panel a {
+        color: rgba(255, 255, 255, 0.86);
+      }
+
+      .contact-panel a:hover,
+      .contact-panel a:focus {
+        color: var(--white);
+      }
+
+      .contact-list {
+        display: grid;
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .contact-item {
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+      }
+
+      .contact-item strong {
+        display: block;
+        margin-bottom: 3px;
+      }
+
+      .map-card {
+        min-height: 100%;
+        padding: 28px;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      .map-box {
+        display: grid;
+        place-items: center;
+        min-height: 250px;
+        margin-top: 18px;
+        padding: 28px;
+        color: var(--white);
+        background:
+          linear-gradient(135deg, rgba(68, 111, 112, 0.9), rgba(16, 47, 84, 0.92)),
+          url("assets/praxis-ostea-waiblingen.jpg") center / cover;
+        border-radius: var(--radius);
+        text-align: center;
+      }
+
+      .map-box strong {
+        display: block;
+        font-size: 1.28rem;
+      }
+
+      .map-box span {
+        display: block;
+        margin-top: 8px;
+        color: rgba(255, 255, 255, 0.82);
+      }
+
+      .legal {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 24px;
+      }
+
+      .legal article {
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      footer {
+        padding: 34px 0;
+        background: var(--ink);
+        color: var(--white);
+      }
+
+      .footer-inner {
+        width: min(100% - 32px, var(--max));
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      footer a,
+      footer span {
+        color: rgba(255, 255, 255, 0.78);
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      @media (max-width: 980px) {
+        .nav-toggle-label {
+          display: inline-flex;
+        }
+
+        nav {
+          position: absolute;
+          left: 0;
+          top: 76px;
+          width: 100%;
+          max-height: 0;
+          overflow: hidden;
+          background: var(--paper);
+          border-bottom: 1px solid var(--line);
+          transition: max-height 180ms ease;
+        }
+
+        nav ul {
+          width: min(100% - 32px, var(--max));
+          margin: 0 auto;
+          padding: 16px 0 22px;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .nav-toggle:checked ~ nav {
+          max-height: 460px;
+        }
+
+        .hero,
+        .split,
+        .split.reverse,
+        .section-head,
+        .contact,
+        .legal {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          min-height: auto;
+          padding-bottom: 34px;
+        }
+
+        .hero-media img {
+          min-height: 320px;
+          max-height: 54vh;
+        }
+
+        .grid,
+        .process {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .facts {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 640px) {
+        .brand span {
+          display: none;
+        }
+
+        .hero,
+        .section-inner,
+        .nav,
+        .footer-inner {
+          width: min(100% - 24px, var(--max));
+        }
+
+        section {
+          padding: 60px 0;
+        }
+
+        .notice {
+          position: static;
+          margin-top: 12px;
+          max-width: none;
+        }
+
+        .grid,
+        .process,
+        .faq,
+        .facts {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-actions,
+        .cta-row {
+          display: grid;
+        }
+
+        .button {
+          width: 100%;
+        }
+      }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "MedicalBusiness",
+        "name": "OSTEA - Praxis f\u00fcr Osteopathie",
+        "url": "https://www.ostea.de/",
+        "image": "https://www.ostea.de/assets/praxis-ostea-waiblingen.jpg",
+        "logo": "https://www.ostea.de/assets/ostea-logo.jpg",
+        "email": "s.hoffmann@ostea.de",
+        "telephone": "+491777415550",
+        "priceRange": "Abrechnung nach Geb\u00fcH",
+        "founder": {
+          "@type": "Person",
+          "name": "Sonja Hoffmann",
+          "jobTitle": "Heilpraktikerin"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Bahnhofstra\u00dfe 75",
+          "postalCode": "71332",
+          "addressLocality": "Waiblingen",
+          "addressCountry": "DE"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 48.8274138,
+          "longitude": 9.3041108
+        },
+        "areaServed": ["Waiblingen", "Rems-Murr-Kreis", "Stuttgart"],
+        "medicalSpecialty": ["Osteopathie", "Kinderosteopathie"],
+        "availableService": [
+          "Osteopathie f\u00fcr Erwachsene",
+          "Osteopathie f\u00fcr Babys und Kinder",
+          "Osteopathische Begleitung in Schwangerschaft und nach Geburt",
+          "Craniosacrale Therapie"
+        ],
+        "sameAs": ["https://calendly.com/ostea/60min"]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Wie l\u00e4uft der erste Termin ab?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Der Ersttermin beginnt mit einer ausf\u00fchrlichen Anamnese. Danach folgen osteopathische Befundung und Behandlung. Je nach Anliegen erhalten Patientinnen und Patienten Empfehlungen f\u00fcr die Zeit danach."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Wie lange dauert eine Behandlung?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Eine Sitzung dauert meistens etwa 60 Minuten. Bei Babys und Kindern wird die Dauer individuell angepasst."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Was muss ich mitbringen?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Bitte bringen Sie ein Handtuch mit und tragen Sie bequeme Kleidung. F\u00fcr Babys ist eine Wickelunterlage oder ein zus\u00e4tzliches Handtuch sinnvoll."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "\u00dcbernimmt meine Krankenkasse Osteopathie?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Die Abrechnung erfolgt nach Geb\u00fcH. Viele Krankenkassen bezuschussen osteopathische Behandlungen ganz oder anteilig. Bitte kl\u00e4ren Sie die Erstattung vorab direkt mit Ihrer Krankenkasse."
+            }
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <header>
+      <div class="nav">
+        <a class="brand" href="#top" aria-label="OSTEA Startseite">
+          <img src="assets/ostea-logo.jpg" alt="OSTEA Logo" width="46" height="46">
+          <span>
+            <strong>OSTEA</strong>
+            <span>Praxis f&uuml;r Osteopathie in Waiblingen</span>
+          </span>
+        </a>
+        <input class="nav-toggle" type="checkbox" id="nav-toggle" aria-label="Navigation &ouml;ffnen">
+        <label class="nav-toggle-label" for="nav-toggle" aria-hidden="true"><span></span></label>
+        <nav aria-label="Hauptnavigation">
+          <ul>
+            <li><a href="#leistungen">Leistungen</a></li>
+            <li><a href="#kinderosteopathie">Kinder</a></li>
+            <li><a href="#ablauf">Ablauf</a></li>
+            <li><a href="#ueber-mich">&Uuml;ber mich</a></li>
+            <li><a href="#kontakt">Kontakt</a></li>
+            <li><a class="button" href="https://calendly.com/ostea/60min" target="_blank" rel="noopener">Termin buchen</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div>
+          <p class="eyebrow">OSTEA - Sonja Hoffmann</p>
+          <h1 id="hero-title">Osteopathie in Waiblingen f&uuml;r Erwachsene, Schwangere, Babys und Kinder</h1>
+          <p class="lead">In meiner Praxis OSTEA begleite ich Sie mit ruhiger, manueller und ganzheitlich orientierter osteopathischer Behandlung. Der Schwerpunkt liegt auf individueller Betreuung, achtsamer Befundung und besonderer Erfahrung in der Arbeit mit Babys und Kindern.</p>
+          <div class="hero-actions">
+            <a class="button" href="https://calendly.com/ostea/60min" target="_blank" rel="noopener">Ersttermin buchen</a>
+            <a class="button secondary" href="mailto:s.hoffmann@ostea.de?subject=Anfrage%20OSTEA%20Waiblingen">Frage zur Behandlung stellen</a>
+          </div>
+          <p class="meta-line">Ersttermin ca. 60 Minuten &middot; Anamnese, Befundung und Behandlung &middot; Bitte Handtuch mitbringen</p>
+        </div>
+        <div class="hero-media">
+          <img src="assets/praxis-ostea-waiblingen.jpg" alt="Sonja Hoffmann in der OSTEA Praxis f&uuml;r Osteopathie in Waiblingen" width="1600" height="1168">
+          <div class="notice">
+            <strong>Neue Praxisadresse</strong>
+            <span>Bahnhofstra&szlig;e 75<br>71332 Waiblingen</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="leistungen" class="band" aria-labelledby="leistungen-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Behandlungsschwerpunkte</p>
+              <h2 id="leistungen-title">Osteopathie mit Blick auf den ganzen Menschen</h2>
+            </div>
+            <p>Osteopathie ist ein manuelles Verfahren. Im Mittelpunkt stehen Beweglichkeit, Gewebe, Zusammenh&auml;nge im K&ouml;rper und die Frage, ob eine osteopathische Behandlung f&uuml;r Ihr Anliegen sinnvoll ist.</p>
+          </div>
+          <div class="grid">
+            <article class="card">
+              <span class="kicker">Erwachsene</span>
+              <h3>R&uuml;cken, Nacken, Kiefer und Beweglichkeit</h3>
+              <p>Menschen kommen h&auml;ufig mit Beschwerden rund um Wirbels&auml;ule, Gelenke, Muskeln, Kiefer oder Kopfthemen in die Praxis. Die Behandlung wird individuell nach Anamnese und Befund abgestimmt.</p>
+            </article>
+            <article class="card">
+              <span class="kicker">Schwangerschaft</span>
+              <h3>Begleitung vor und nach der Geburt</h3>
+              <p>In Schwangerschaft und Wochenbett ver&auml;ndert sich der K&ouml;rper deutlich. Osteopathische Behandlung kann eine ruhige, k&ouml;rperorientierte Begleitung in dieser besonderen Zeit sein.</p>
+            </article>
+            <article class="card">
+              <span class="kicker">Babys & Kinder</span>
+              <h3>Kinderosteopathie in Waiblingen</h3>
+              <p>Ein besonderer Schwerpunkt von OSTEA ist die Behandlung von S&auml;uglingen und Kindern. Dabei arbeite ich behutsam, aufmerksam und mit viel Ruhe f&uuml;r Kind und Eltern.</p>
+            </article>
+          </div>
+          <div class="facts" aria-label="Qualifikationen">
+            <div class="fact"><strong>2013</strong><span>Ausbildung Osteopathie</span></div>
+            <div class="fact"><strong>2014</strong><span>Heilpraktikerin</span></div>
+            <div class="fact"><strong>2019</strong><span>Gro&szlig;e Fachausbildung Kinderosteopathie</span></div>
+            <div class="fact"><strong>2025</strong><span>Biodynamische craniosacrale Therapie</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="kinderosteopathie" aria-labelledby="kinder-title">
+        <div class="section-inner split">
+          <div>
+            <p class="eyebrow">S&auml;uglinge, Kinder & Eltern</p>
+            <h2 id="kinder-title">Osteopathie f&uuml;r Babys und Kinder</h2>
+            <p>Die Behandlung von Babys und Kindern braucht Zeit, Ruhe und eine gute Wahrnehmung f&uuml;r kleine Signale. Vor der Behandlung sprechen wir &uuml;ber Schwangerschaft, Geburt, Entwicklung und das aktuelle Anliegen.</p>
+            <p>Eltern kommen h&auml;ufig mit Themen wie Verdauung, Schlaf, Unruhe, Stillen, Haltung, Asymmetrien oder Begleitung nach besonderen Geburtsverl&auml;ufen. Ob und wie Osteopathie sinnvoll ist, kl&auml;ren wir individuell im Termin.</p>
+            <ul class="list">
+              <li>Behutsame Befundung und Behandlung in kindgerechter Atmosph&auml;re</li>
+              <li>Raum f&uuml;r Fragen der Eltern und Hinweise f&uuml;r den Alltag</li>
+              <li>Terminl&auml;nge und Ablauf werden an das Kind angepasst</li>
+            </ul>
+            <div class="cta-row">
+              <a class="button" href="https://calendly.com/ostea/60min" target="_blank" rel="noopener">Termin f&uuml;r Baby oder Kind buchen</a>
+            </div>
+          </div>
+          <img class="soft-image" src="assets/praxis-ostea-waiblingen.jpg" alt="Heller Behandlungsraum der OSTEA Praxis in Waiblingen" width="1600" height="1168" loading="lazy">
+        </div>
+      </section>
+
+      <section id="ablauf" class="band" aria-labelledby="ablauf-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Ablauf & Kosten</p>
+              <h2 id="ablauf-title">Was Sie beim Termin erwartet</h2>
+            </div>
+            <p>Eine Sitzung dauert meistens etwa eine Stunde. Bei Babys und Kindern wird die Behandlungsdauer individuell angepasst.</p>
+          </div>
+          <div class="process">
+            <article class="card">
+              <h3>Anamnese</h3>
+              <p>Zu Beginn sprechen wir ausf&uuml;hrlich &uuml;ber Ihr Anliegen, Ihre Beschwerden und Ihre gesundheitliche Vorgeschichte.</p>
+            </article>
+            <article class="card">
+              <h3>Befundung</h3>
+              <p>Ich untersuche Beweglichkeit, Spannung und k&ouml;rperliche Zusammenh&auml;nge, um die Behandlung passend auszurichten.</p>
+            </article>
+            <article class="card">
+              <h3>Behandlung</h3>
+              <p>Die osteopathische Behandlung erfolgt manuell, ruhig und individuell auf die aktuelle Situation abgestimmt.</p>
+            </article>
+            <article class="card">
+              <h3>Empfehlungen</h3>
+              <p>Wenn sinnvoll, erhalten Sie Hinweise f&uuml;r die Zeit nach der Behandlung und den weiteren Verlauf.</p>
+            </article>
+          </div>
+          <div class="cta-row">
+            <a class="button" href="https://calendly.com/ostea/60min" target="_blank" rel="noopener">Termin online buchen</a>
+            <a class="button secondary" href="tel:+491777415550">0177-7 41 55 50 anrufen</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="ueber-mich" aria-labelledby="ueber-title">
+        <div class="section-inner split reverse">
+          <img class="portrait" src="assets/sonja-hoffmann-ostea.png" alt="Sonja Hoffmann, Heilpraktikerin bei OSTEA in Waiblingen" width="668" height="701" loading="lazy">
+          <div>
+            <p class="eyebrow">&Uuml;ber mich</p>
+            <h2 id="ueber-title">Sonja Hoffmann - Heilpraktikerin in Waiblingen</h2>
+            <p>In meiner Arbeit ist mir wichtig, den Menschen nicht auf einzelne Beschwerden zu reduzieren. Ich nehme mir Zeit f&uuml;r Ihre Geschichte, Ihre aktuelle Situation und die Zusammenh&auml;nge im K&ouml;rper.</p>
+            <p>Besonders in der Behandlung von Babys und Kindern arbeite ich mit Ruhe, Achtsamkeit und Erfahrung. Meine fachlichen Schwerpunkte entwickle ich regelm&auml;&szlig;ig weiter, unter anderem in Kinderosteopathie, Sportosteopathie und biodynamischer craniosacraler Therapie.</p>
+            <ul class="list">
+              <li>Osteopathie, Abschluss 2013</li>
+              <li>Heilpraktikerin seit 2014</li>
+              <li>P&auml;diatrie, S&auml;uglings- und Kinder-Cranio/Osteopathie 2016</li>
+              <li>Sportosteopathie 2023</li>
+              <li>Biodynamische craniosacrale Therapie 2025</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="band" aria-labelledby="faq-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">FAQ</p>
+              <h2 id="faq-title">H&auml;ufige Fragen</h2>
+            </div>
+            <p>Die wichtigsten Informationen vor dem ersten Besuch in der Praxis.</p>
+          </div>
+          <div class="faq">
+            <details open>
+              <summary>Wie l&auml;uft der erste Termin ab?</summary>
+              <p>Der Ersttermin beginnt mit einer ausf&uuml;hrlichen Anamnese. Danach folgen osteopathische Befundung und Behandlung. Manchmal geht die Befundung direkt in die Behandlung &uuml;ber.</p>
+            </details>
+            <details>
+              <summary>Wie viele Termine sind sinnvoll?</summary>
+              <p>Das ist individuell unterschiedlich. Bei akuten Anliegen reichen manchmal wenige Termine, bei l&auml;nger bestehenden Beschwerden kann eine Begleitung &uuml;ber einen l&auml;ngeren Zeitraum sinnvoll sein.</p>
+            </details>
+            <details>
+              <summary>Was sollte ich mitbringen?</summary>
+              <p>Bitte bringen Sie ein Handtuch mit und tragen Sie bequeme Kleidung. Bei Babys bitte eine Wickelunterlage oder ein zus&auml;tzliches Handtuch mitbringen.</p>
+            </details>
+            <details>
+              <summary>Was kostet eine osteopathische Behandlung?</summary>
+              <p>Die Abrechnung erfolgt nach dem Geb&uuml;hrenverzeichnis f&uuml;r Heilpraktiker (Geb&uuml;H). Viele Krankenkassen bezuschussen osteopathische Behandlungen ganz oder anteilig. Bitte kl&auml;ren Sie die Erstattung vorab direkt mit Ihrer Krankenkasse.</p>
+            </details>
+            <details>
+              <summary>Was kann ich nach der Behandlung tun?</summary>
+              <p>Trinken Sie ausreichend Wasser, planen Sie Ruhe ein und bevorzugen Sie leichte Bewegung. Auf intensive k&ouml;rperliche Belastung oder Sport sollten Sie ein bis zwei Tage verzichten.</p>
+            </details>
+            <details>
+              <summary>Gibt es Termine online?</summary>
+              <p>Ja. Sie k&ouml;nnen den Calendly-Link zur Online-Terminbuchung nutzen oder sich telefonisch beziehungsweise per E-Mail melden.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section id="kontakt" aria-labelledby="kontakt-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Kontakt</p>
+              <h2 id="kontakt-title">OSTEA Praxis f&uuml;r Osteopathie in Waiblingen</h2>
+            </div>
+            <p>Termine k&ouml;nnen Sie online buchen. F&uuml;r Fragen erreichen Sie mich telefonisch, per E-Mail oder per WhatsApp.</p>
+          </div>
+          <div class="contact">
+            <div class="contact-panel">
+              <h3>Sonja Hoffmann</h3>
+              <p>Heilpraktikerin<br>OSTEA - Praxis f&uuml;r Osteopathie</p>
+              <div class="contact-list">
+                <div class="contact-item">
+                  <strong>Adresse</strong>
+                  <a href="https://www.google.com/maps/search/?api=1&query=Bahnhofstra%C3%9Fe%2075%2C%2071332%20Waiblingen" target="_blank" rel="noopener">Bahnhofstra&szlig;e 75, 71332 Waiblingen</a>
+                </div>
+                <div class="contact-item">
+                  <strong>Telefon</strong>
+                  <a href="tel:+491777415550">0177-7 41 55 50</a>
+                </div>
+                <div class="contact-item">
+                  <strong>E-Mail</strong>
+                  <a href="mailto:s.hoffmann@ostea.de">s.hoffmann@ostea.de</a>
+                </div>
+                <div class="contact-item">
+                  <strong>WhatsApp</strong>
+                  <a href="https://wa.me/491777415550" target="_blank" rel="noopener">Nachricht per WhatsApp senden</a>
+                </div>
+              </div>
+              <div class="cta-row">
+                <a class="button" href="https://calendly.com/ostea/60min" target="_blank" rel="noopener">Termin buchen</a>
+              </div>
+            </div>
+            <div class="map-card">
+              <h3>Standort</h3>
+              <p>Die Praxis befindet sich in der Bahnhofstra&szlig;e 75 in 71332 Waiblingen. Bitte pr&uuml;fen Sie Ihre Anfahrt vorab &uuml;ber den Kartenlink.</p>
+              <a class="map-box" href="https://www.google.com/maps/search/?api=1&query=Bahnhofstra%C3%9Fe%2075%2C%2071332%20Waiblingen" target="_blank" rel="noopener" aria-label="OSTEA Standort in Google Maps &ouml;ffnen">
+                <span>
+                  <strong>OSTEA in Waiblingen</strong>
+                  <span>Standort in Google Maps &ouml;ffnen</span>
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="rechtliches" class="band" aria-labelledby="rechtliches-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Rechtliches</p>
+              <h2 id="rechtliches-title">Impressum & Datenschutz</h2>
+            </div>
+            <p>Die Angaben wurden aus der bestehenden Seite &uuml;bernommen und auf die neue Praxisadresse angepasst. Vor Livegang sollten Impressum und Datenschutz rechtlich final gepr&uuml;ft werden.</p>
+          </div>
+          <div class="legal">
+            <article id="impressum">
+              <h3>Impressum</h3>
+              <p><strong>Angaben nach &sect; 5 DDG</strong></p>
+              <p>OSTEA - Praxis f&uuml;r Osteopathie<br>Sonja Hoffmann<br>Bahnhofstra&szlig;e 75<br>71332 Waiblingen<br>Telefon: <a href="tel:+491777415550">0177-7 41 55 50</a><br>E-Mail: <a href="mailto:s.hoffmann@ostea.de">s.hoffmann@ostea.de</a></p>
+              <p><strong>Berufsbezeichnung</strong><br>Heilpraktikerin. Die Erlaubnis zur Aus&uuml;bung der Heilkunde nach dem Heilpraktikergesetz wurde vom Gesundheitsamt der Stadt Heilbronn erteilt.</p>
+              <p><strong>Zust&auml;ndige Beh&ouml;rde</strong><br>Gesundheitsamt Waiblingen, Bahnhofstr. 1, 71332 Waiblingen</p>
+              <p><strong>Streitschlichtung</strong><br>Ich bin nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+            </article>
+            <article id="datenschutz">
+              <h3>Datenschutz</h3>
+              <p>Diese statische Website nutzt keine eingebundenen Analyse-Tools, kein Kontaktformular und keine extern geladenen Webfonts. Beim Aufruf k&ouml;nnen durch den Hosting-Anbieter technisch erforderliche Server-Logdaten verarbeitet werden.</p>
+              <p>Bei einer Kontaktaufnahme per Telefon, E-Mail, WhatsApp oder &uuml;ber den externen Terminbuchungslink werden die von Ihnen &uuml;bermittelten Daten zur Bearbeitung Ihrer Anfrage verarbeitet.</p>
+              <p>Externe Links f&uuml;hren zu Calendly, Google Maps und WhatsApp. Beim Anklicken gelten die Datenschutzbestimmungen der jeweiligen Anbieter.</p>
+              <p>Verantwortlich f&uuml;r die Datenverarbeitung: Sonja Hoffmann, Bahnhofstra&szlig;e 75, 71332 Waiblingen, <a href="mailto:s.hoffmann@ostea.de">s.hoffmann@ostea.de</a>.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <span>&copy; OSTEA - Praxis f&uuml;r Osteopathie, Sonja Hoffmann</span>
+        <div class="footer-links">
+          <a href="#impressum">Impressum</a>
+          <a href="#datenschutz">Datenschutz</a>
+          <a href="https://calendly.com/ostea/60min" target="_blank" rel="noopener">Termin buchen</a>
+          <a href="https://www.ostea.de/" target="_blank" rel="noopener">Originalseite</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
