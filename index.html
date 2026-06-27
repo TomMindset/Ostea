@@ -44,7 +44,7 @@
         color: var(--ink);
         background: var(--paper);
         font-family: Arial, Helvetica, sans-serif;
-        line-height: 1.65;
+        line-height: 1.58;
       }
 
       img {
@@ -180,8 +180,8 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        min-height: 46px;
-        padding: 12px 18px;
+        min-height: 44px;
+        padding: 11px 18px;
         color: var(--white);
         background: var(--teal);
         border: 1px solid var(--teal);
@@ -212,9 +212,9 @@
       .hero {
         width: min(100% - 32px, var(--max));
         margin: 16px auto 0;
-        padding: 14px 0 48px;
+        padding: 16px 0 42px;
         display: grid;
-        grid-template-columns: minmax(0, 0.98fr) minmax(340px, 1.02fr);
+        grid-template-columns: minmax(0, 1.04fr) minmax(340px, 0.96fr);
         min-height: calc(100vh - 104px);
         gap: 36px;
         align-items: center;
@@ -238,22 +238,22 @@
 
       h1 {
         max-width: 780px;
-        font-size: clamp(2.2rem, 4.3vw, 3.35rem);
+        font-size: clamp(2.05rem, 3.8vw, 3.05rem);
       }
 
       h2 {
-        font-size: clamp(1.8rem, 4vw, 3.05rem);
+        font-size: clamp(1.65rem, 3.2vw, 2.55rem);
       }
 
       h3 {
-        font-size: 1.22rem;
+        font-size: 1.12rem;
       }
 
       .lead {
         margin: 18px 0 0;
         max-width: 680px;
         color: var(--muted);
-        font-size: clamp(1.05rem, 2vw, 1.28rem);
+        font-size: clamp(1.02rem, 1.5vw, 1.14rem);
       }
 
       .hero-actions,
@@ -276,8 +276,8 @@
 
       .hero-media img {
         width: 100%;
-        min-height: 500px;
-        max-height: 72vh;
+        min-height: 420px;
+        max-height: 62vh;
         object-fit: cover;
         object-position: center;
         border-radius: var(--radius);
@@ -313,7 +313,7 @@
       }
 
       section {
-        padding: 84px 0;
+        padding: 72px 0;
       }
 
       .section-inner {
@@ -344,12 +344,45 @@
         gap: 18px;
       }
 
+      .audience-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
       .card {
         min-height: 100%;
-        padding: 24px;
+        padding: 22px;
         background: var(--white);
         border: 1px solid var(--line);
         border-radius: var(--radius);
+      }
+
+      .path-card {
+        display: flex;
+        min-height: 100%;
+        flex-direction: column;
+        gap: 12px;
+        padding: 18px;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      .path-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.52;
+      }
+
+      .path-card strong {
+        color: var(--ink);
+      }
+
+      .path-card .button {
+        width: 100%;
+        margin-top: auto;
       }
 
       .card p,
@@ -393,12 +426,14 @@
 
       .portrait {
         width: 100%;
+        max-height: 620px;
         aspect-ratio: 4 / 5;
         object-fit: cover;
       }
 
       .soft-image {
         width: 100%;
+        max-height: 520px;
         aspect-ratio: 5 / 4;
         object-fit: cover;
       }
@@ -440,8 +475,8 @@
       }
 
       .fact {
-        min-height: 124px;
-        padding: 20px;
+        min-height: 110px;
+        padding: 18px;
         background: var(--white);
       }
 
@@ -667,6 +702,7 @@
         }
 
         .grid,
+        .audience-grid,
         .process {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
@@ -699,6 +735,7 @@
         }
 
         .grid,
+        .audience-grid,
         .process,
         .faq,
         .facts {
@@ -810,6 +847,7 @@
         <label class="nav-toggle-label" for="nav-toggle" aria-hidden="true"><span></span></label>
         <nav aria-label="Hauptnavigation">
           <ul>
+            <li><a href="#fuer-wen">F&uuml;r wen</a></li>
             <li><a href="#leistungen">Leistungen</a></li>
             <li><a href="#kinderosteopathie">Kinder</a></li>
             <li><a href="#ablauf">Ablauf</a></li>
@@ -842,6 +880,52 @@
         </div>
       </section>
 
+      <section id="fuer-wen" aria-labelledby="fuer-wen-title">
+        <div class="section-inner">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Ihr Einstieg</p>
+              <h2 id="fuer-wen-title">Womit kommen Menschen zu OSTEA?</h2>
+            </div>
+            <p>Viele Besucherinnen und Besucher wissen nicht, ob Osteopathie zu ihrem Anliegen passt. Diese Einstiege helfen Ihnen, sich schnell einzuordnen und den passenden n&auml;chsten Schritt zu finden.</p>
+          </div>
+          <div class="audience-grid">
+            <article class="path-card">
+              <span class="kicker">Erwachsene</span>
+              <h3>R&uuml;cken, Nacken, Kiefer oder Kopfthemen</h3>
+              <p><strong>Warum Sie kommen:</strong> Beschwerden wiederholen sich, Beweglichkeit fehlt oder Zusammenh&auml;nge sind unklar.</p>
+              <p><strong>Warum Sonja passt:</strong> Zeit f&uuml;r Anamnese, manuelle Befundung und ruhige Behandlung.</p>
+              <a class="button secondary" href="#leistungen">Passende Behandlung ansehen</a>
+            </article>
+            <article class="path-card">
+              <span class="kicker">Eltern</span>
+              <h3>Baby, S&auml;ugling oder Kind</h3>
+              <p><strong>Warum Sie kommen:</strong> Unruhe, Spannung, Asymmetrien oder Fragen nach Schwangerschaft und Geburt.</p>
+              <p><strong>Warum Sonja passt:</strong> Kinderosteopathie ist Schwerpunkt, mit spezieller Ausbildung und ruhiger Arbeitsweise.</p>
+              <a class="button secondary" href="#kinderosteopathie">Kinderosteopathie verstehen</a>
+            </article>
+            <article class="path-card">
+              <span class="kicker">Schwangerschaft</span>
+              <h3>Vor und nach der Geburt</h3>
+              <p><strong>Warum Sie kommen:</strong> Becken, R&uuml;cken, Atmung oder Gewebe brauchen Aufmerksamkeit.</p>
+              <p><strong>Warum Sonja passt:</strong> Erfahrung mit Schwangerschaft, Babys und sanfter manueller Begleitung.</p>
+              <a class="button secondary" href="https://calendly.com/ostea/60min" target="_blank" rel="noopener">Termin buchen</a>
+            </article>
+            <article class="path-card">
+              <span class="kicker">Aktive Menschen</span>
+              <h3>Sport, Belastung und Beweglichkeit</h3>
+              <p><strong>Warum Sie kommen:</strong> Beschwerden entstehen bei Belastung oder Regeneration dauert zu lange.</p>
+              <p><strong>Warum Sonja passt:</strong> Sportosteopathie und craniosacrale Therapie erg&auml;nzen den ganzheitlichen Blick.</p>
+              <a class="button secondary" href="#ueber-mich">Qualifikation ansehen</a>
+            </article>
+          </div>
+          <div class="cta-row">
+            <a class="button" href="https://calendly.com/ostea/60min" target="_blank" rel="noopener">Passenden Ersttermin buchen</a>
+            <a class="button secondary" href="mailto:s.hoffmann@ostea.de?subject=Frage%20zur%20passenden%20Behandlung">Unsicher? Frage senden</a>
+          </div>
+        </div>
+      </section>
+
       <section id="leistungen" class="band" aria-labelledby="leistungen-title">
         <div class="section-inner">
           <div class="section-head">
@@ -855,12 +939,12 @@
             <article class="card">
               <span class="kicker">Erwachsene</span>
               <h3>R&uuml;cken, Nacken, Kiefer und Beweglichkeit</h3>
-              <p>Menschen kommen h&auml;ufig mit Beschwerden rund um Wirbels&auml;ule, Gelenke, Muskeln, Kiefer oder Kopfthemen in die Praxis. Die Behandlung wird individuell nach Anamnese und Befund abgestimmt.</p>
+              <p>Menschen kommen h&auml;ufig mit Beschwerden rund um Wirbels&auml;ule, Gelenke, Muskeln, Kiefer oder Kopfthemen in die Praxis. Im Ersttermin wird gepr&uuml;ft, welche k&ouml;rperlichen Zusammenh&auml;nge f&uuml;r Ihr Anliegen relevant sein k&ouml;nnen.</p>
             </article>
             <article class="card">
               <span class="kicker">Schwangerschaft</span>
               <h3>Begleitung vor und nach der Geburt</h3>
-              <p>In Schwangerschaft und Wochenbett ver&auml;ndert sich der K&ouml;rper deutlich. Osteopathische Behandlung kann eine ruhige, k&ouml;rperorientierte Begleitung in dieser besonderen Zeit sein.</p>
+              <p>In Schwangerschaft und Wochenbett ver&auml;ndert sich der K&ouml;rper deutlich. Die Behandlung bietet einen ruhigen Rahmen, um Becken, R&uuml;cken, Atmung und Gewebe achtsam zu begleiten.</p>
             </article>
             <article class="card">
               <span class="kicker">Babys & Kinder</span>
