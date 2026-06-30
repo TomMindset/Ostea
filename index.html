@@ -11,8 +11,12 @@
     <meta property="og:locale" content="de_DE">
     <meta property="og:title" content="Osteopathie Waiblingen | OSTEA - Sonja Hoffmann">
     <meta property="og:description" content="Osteopathie in Waiblingen f&uuml;r Erwachsene, Schwangere, Babys und Kinder. Termine online buchen.">
-    <meta property="og:image" content="assets/praxis-ostea-waiblingen.jpg">
+    <meta property="og:image" content="https://www.ostea.de/assets/praxis-ostea-waiblingen.jpg">
     <meta property="og:url" content="https://www.ostea.de/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Osteopathie Waiblingen | OSTEA - Sonja Hoffmann">
+    <meta name="twitter:description" content="Osteopathie in Waiblingen f&uuml;r Erwachsene, Schwangere, Babys und Kinder. Termine online buchen.">
+    <meta name="twitter:image" content="https://www.ostea.de/assets/praxis-ostea-waiblingen.jpg">
     <meta name="theme-color" content="#78C4F6">
     <style>
       :root {
@@ -764,6 +768,7 @@
       {
         "@context": "https://schema.org",
         "@type": "MedicalBusiness",
+        "@id": "https://www.ostea.de/#ostea",
         "name": "OSTEA - Praxis f\u00fcr Osteopathie",
         "url": "https://www.ostea.de/",
         "image": "https://www.ostea.de/assets/praxis-ostea-waiblingen.jpg",
@@ -788,15 +793,45 @@
           "latitude": 48.8274138,
           "longitude": 9.3041108
         },
+        "hasMap": "https://www.google.com/maps/search/?api=1&query=Bahnhofstra%C3%9Fe%2075%2C%2071332%20Waiblingen",
         "areaServed": ["Waiblingen", "Rems-Murr-Kreis", "Stuttgart"],
         "medicalSpecialty": ["Osteopathie", "Kinderosteopathie"],
         "availableService": [
-          "Osteopathie f\u00fcr Erwachsene",
-          "Osteopathie f\u00fcr Babys und Kinder",
-          "Osteopathische Begleitung in Schwangerschaft und nach Geburt",
-          "Craniosacrale Therapie"
+          {
+            "@type": "MedicalTherapy",
+            "name": "Osteopathie f\u00fcr Erwachsene"
+          },
+          {
+            "@type": "MedicalTherapy",
+            "name": "Osteopathie f\u00fcr Babys und Kinder"
+          },
+          {
+            "@type": "MedicalTherapy",
+            "name": "Osteopathische Begleitung in Schwangerschaft und Wochenbett"
+          },
+          {
+            "@type": "MedicalTherapy",
+            "name": "Craniosacrale Therapie"
+          }
         ],
-        "sameAs": ["https://calendly.com/ostea/60min"]
+        "potentialAction": {
+          "@type": "ReserveAction",
+          "target": "https://calendly.com/ostea/60min",
+          "name": "Termin online buchen"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": "https://www.ostea.de/#website",
+        "name": "OSTEA - Praxis f\u00fcr Osteopathie",
+        "url": "https://www.ostea.de/",
+        "inLanguage": "de-DE",
+        "publisher": {
+          "@id": "https://www.ostea.de/#ostea"
+        }
       }
     </script>
     <script type="application/ld+json">
