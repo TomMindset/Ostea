@@ -284,6 +284,8 @@
 
       .hero-media {
         position: relative;
+        width: min(100%, 520px);
+        justify-self: end;
       }
 
       .hero-media img {
@@ -444,7 +446,9 @@
 
       .soft-image {
         width: 100%;
+        max-width: 560px;
         max-height: 520px;
+        justify-self: center;
         aspect-ratio: 1600 / 1386;
         object-fit: cover;
       }
@@ -705,6 +709,11 @@
         .hero {
           min-height: auto;
           padding-bottom: 34px;
+        }
+
+        .hero-media {
+          width: min(100%, 560px);
+          justify-self: center;
         }
 
         .grid,

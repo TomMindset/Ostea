@@ -244,6 +244,8 @@ h3 {
 }
 
 .hero-card {
+  width: min(100%, 430px);
+  justify-self: end;
   padding: 24px;
   box-shadow: var(--shadow);
 }
@@ -421,6 +423,11 @@ footer span {
 
   .hero {
     padding-top: 42px;
+  }
+
+  .hero-card {
+    width: min(100%, 520px);
+    justify-self: center;
   }
 }
 
