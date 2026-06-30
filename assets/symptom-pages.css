@@ -252,7 +252,7 @@ h3 {
 
 .hero-card img {
   width: 100%;
-  aspect-ratio: 1600 / 1386;
+  aspect-ratio: 744 / 801;
   object-fit: cover;
   border-radius: var(--radius);
 }
