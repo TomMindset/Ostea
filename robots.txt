@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.ostea.de/sitemap.xml
+Sitemap: https://ostea.de/sitemap.xml
