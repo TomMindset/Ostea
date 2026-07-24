@@ -435,7 +435,7 @@
         grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
       }
 
-      .practice-video,
+      .practice-placeholder,
       .soft-image {
         border-radius: var(--radius);
         box-shadow: var(--shadow);
@@ -448,13 +448,55 @@
         justify-self: center;
       }
 
-      .practice-video {
-        display: block;
+      .practice-placeholder {
+        position: relative;
+        display: grid;
+        place-items: center;
         width: 100%;
-        height: auto;
         aspect-ratio: 848 / 478;
-        object-fit: cover;
+        overflow: hidden;
         background: var(--deep);
+      }
+
+      .practice-placeholder img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .practice-placeholder::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(23, 50, 74, 0.56);
+      }
+
+      .practice-placeholder-content {
+        position: relative;
+        z-index: 1;
+        max-width: 320px;
+        padding: 24px;
+        color: var(--white);
+        text-align: center;
+      }
+
+      .practice-placeholder-icon {
+        display: grid;
+        width: 54px;
+        height: 54px;
+        margin: 0 auto 16px;
+        place-items: center;
+        border: 2px solid rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        font-size: 1.1rem;
+      }
+
+      .practice-placeholder-content strong {
+        display: block;
+        font-size: 1.1rem;
+        line-height: 1.4;
       }
 
       .practice-video-frame figcaption {
@@ -836,15 +878,6 @@
             "name": "Craniosacrale Therapie"
           }
         ],
-        "subjectOf": {
-          "@type": "VideoObject",
-          "name": "Rundgang durch die OSTEA Praxis in Waiblingen",
-          "description": "Ein persönlicher Rundgang durch die Praxisräume von OSTEA in Waiblingen.",
-          "thumbnailUrl": "https://ostea.de/assets/praxisrundgang-ostea-waiblingen-poster.jpg",
-          "contentUrl": "https://ostea.de/assets/praxisrundgang-ostea-waiblingen.mp4",
-          "uploadDate": "2026-07-22",
-          "duration": "PT1M27S"
-        },
         "potentialAction": {
           "@type": "ReserveAction",
           "target": "https://calendly.com/ostea/60min",
@@ -1095,10 +1128,13 @@
       <section id="ueber-mich" aria-labelledby="ueber-title">
         <div class="section-inner split reverse">
           <figure class="practice-video-frame">
-            <video class="practice-video" controls preload="metadata" playsinline poster="assets/praxisrundgang-ostea-waiblingen-poster.jpg" width="848" height="478" aria-label="Rundgang durch die OSTEA Praxis in Waiblingen">
-              <source src="assets/praxisrundgang-ostea-waiblingen.mp4" type="video/mp4">
-              Ihr Browser kann dieses Video nicht wiedergeben. <a href="assets/praxisrundgang-ostea-waiblingen.mp4">Praxisvideo &ouml;ffnen</a>.
-            </video>
+            <div class="practice-placeholder" aria-labelledby="video-placeholder-title">
+              <img src="assets/praxisrundgang-ostea-waiblingen-poster.jpg" alt="" width="848" height="478" loading="lazy">
+              <div class="practice-placeholder-content">
+                <span class="practice-placeholder-icon" aria-hidden="true">&#9654;</span>
+                <strong id="video-placeholder-title">Neues Praxisvideo folgt in K&uuml;rze</strong>
+              </div>
+            </div>
             <figcaption>Ein Blick in die OSTEA Praxis in Waiblingen</figcaption>
           </figure>
           <div>
