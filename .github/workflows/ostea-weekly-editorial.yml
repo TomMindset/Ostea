@@ -1,0 +1,57 @@
+name: OSTEA weekly editorial trigger
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 7 * * 1"
+      timezone: "Europe/Berlin"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ostea-weekly-editorial
+  cancel-in-progress: false
+
+jobs:
+  trigger:
+    name: Start weekly OSTEA editorial run
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OSTEA_PORTAL_URL: https://ostea-freigabeportal.hoffmann877528.chatgpt.site
+
+    steps:
+      - name: Validate trigger configuration
+        env:
+          TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+        shell: bash
+        run: |
+          if [[ -z "${TRIGGER_SECRET}" ]]; then
+            echo "Repository secret OSTEA_WEEKLY_TRIGGER_SECRET is missing."
+            exit 1
+          fi
+
+      - name: Trigger the weekly editorial run
+        env:
+          TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+          EXTERNAL_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        shell: bash
+        run: |
+          scheduled_for="$(TZ=Europe/Berlin date +%F)"
+          payload="$(printf '{"runKey":"%s","source":"github-actions","externalRunId":"%s"}' \
+            "${scheduled_for}" "${EXTERNAL_RUN_ID}")"
+
+          curl \
+            --fail-with-body \
+            --silent \
+            --show-error \
+            --retry 3 \
+            --retry-all-errors \
+            --connect-timeout 15 \
+            --max-time 180 \
+            --request POST \
+            --header "Authorization: Bearer ${TRIGGER_SECRET}" \
+            --header "Content-Type: application/json" \
+            --data "${payload}" \
+            "${OSTEA_PORTAL_URL}/api/editorial/weekly-trigger"
