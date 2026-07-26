@@ -78,7 +78,7 @@ jobs:
             -InputPath "${{ steps.prepare.outputs.raw_image }}" `
             -OutputPath "${{ steps.prepare.outputs.final_image }}"
 
-      - name: Visually verify and create the approval card
+      - name: Visually verify the final image and create the approval card
         id: finalize
         if: steps.prepare.outputs.should_continue == 'true'
         shell: pwsh

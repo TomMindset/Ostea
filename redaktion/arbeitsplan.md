@@ -51,8 +51,8 @@ Cloud-Runner ruft für die Textrecherche aktuelle Webquellen ab, erstellt das
 strukturierte Paket und erzeugt ein zunächst schriftfreies Grundmotiv.
 
 Anschließend führt ein Windows-Runner das verbindliche Skript
-`redaktion/scripts/add-ai-label.ps1` aus. Die so entstandene finale PNG-Datei
-wird zusätzlich visuell darauf geprüft, dass ausschließlich der exakte,
+`redaktion/scripts/add-ai-label.ps1` aus. Die so entstandene finale PNG- oder
+hochwertige JPEG-Datei wird zusätzlich visuell darauf geprüft, dass ausschließlich der exakte,
 lesbare Hinweis `KI-generiert` unten rechts vorhanden und nicht angeschnitten
 ist. Erst danach werden Bild und Textpaket in das Freigabeportal übertragen.
 Der Freigabelink bleibt im kurzlebigen Runner-Arbeitsverzeichnis und wird

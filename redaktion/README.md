@@ -18,9 +18,9 @@ Kennzeichnung reproduzierbar eingefügt:
   -OutputPath .\redaktion\entwuerfe\...\motiv-final.png
 ```
 
-Nur die so erzeugte und anschließend visuell geprüfte `*-final`-Datei darf in
-die Freigabe oder Veröffentlichung gelangen. Das Skript überschreibt keine
-vorhandene Datei.
+Nur die so erzeugte und anschließend visuell geprüfte `*-final`-Datei im
+PNG- oder hochwertigen JPEG-Format darf in die Freigabe oder Veröffentlichung
+gelangen. Das Skript überschreibt keine vorhandene Datei.
 
 ## Aktueller Betriebszustand
 

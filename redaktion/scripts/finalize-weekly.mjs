@@ -54,7 +54,51 @@ function pngDimensions(bytes) {
   return { width, height };
 }
 
+function jpegDimensions(bytes) {
+  if (bytes.length < 16 || bytes[0] !== 0xff || bytes[1] !== 0xd8) {
+    return null;
+  }
+  const startOfFrame = new Set([
+    0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7,
+    0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf,
+  ]);
+  let offset = 2;
+  while (offset + 8 < bytes.length) {
+    if (bytes[offset] !== 0xff) {
+      offset += 1;
+      continue;
+    }
+    while (offset < bytes.length && bytes[offset] === 0xff) offset += 1;
+    const marker = bytes[offset];
+    offset += 1;
+    if (marker === 0xd8 || marker === 0xd9) continue;
+    if (marker === 0xda) break;
+    if (offset + 2 > bytes.length) return null;
+    const length = bytes.readUInt16BE(offset);
+    if (length < 2 || offset + length > bytes.length) return null;
+    if (startOfFrame.has(marker)) {
+      const height = bytes.readUInt16BE(offset + 3);
+      const width = bytes.readUInt16BE(offset + 5);
+      if (width < 512 || height < 512) return null;
+      return { width, height };
+    }
+    offset += length;
+  }
+  return null;
+}
+
+function imageInfo(bytes) {
+  try {
+    return { ...pngDimensions(bytes), contentType: "image/png", extension: "png" };
+  } catch {
+    const dimensions = jpegDimensions(bytes);
+    if (!dimensions) throw new Error("Die finale Datei ist weder PNG noch JPEG.");
+    return { ...dimensions, contentType: "image/jpeg", extension: "jpg" };
+  }
+}
+
 async function verifyFinalImage(bytes) {
+  const file = imageInfo(bytes);
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
@@ -78,7 +122,7 @@ Setze ein Prüffeld nur dann auf true, wenn es visuell eindeutig erfüllt ist.`,
             },
             {
               type: "input_image",
-              image_url: `data:image/png;base64,${bytes.toString("base64")}`,
+              image_url: `data:${file.contentType};base64,${bytes.toString("base64")}`,
               detail: "high",
             },
           ],
@@ -141,9 +185,9 @@ async function main() {
     await readFile(resolve(workDir, "portal-package.json"), "utf8"),
   );
   const image = await readFile(resolve(state.finalImagePath));
-  const dimensions = pngDimensions(image);
+  const file = imageInfo(image);
 
-  console.log("Die final gekennzeichnete PNG-Datei wird visuell geprüft.");
+  console.log("Die final gekennzeichnete Bilddatei wird visuell geprüft.");
   const verification = await verifyFinalImage(image);
   pkg.payload.instagram.imageDisclosure = {
     aiGenerated: true,
@@ -153,8 +197,8 @@ async function main() {
     verifiedAt: new Date().toISOString(),
     verificationMethod:
       "OSTEA add-ai-label.ps1 plus visuelle OpenAI-Dateiprüfung",
-    width: dimensions.width,
-    height: dimensions.height,
+    width: file.width,
+    height: file.height,
   };
   await writeFile(
     resolve(workDir, "portal-package.json"),
@@ -166,7 +210,11 @@ async function main() {
   form.set("runKey", state.runKey);
   form.set("package", JSON.stringify(pkg));
   form.set("verification", JSON.stringify(verification));
-  form.set("image", new Blob([image], { type: "image/png" }), "motiv-final.png");
+  form.set(
+    "image",
+    new Blob([image], { type: file.contentType }),
+    `motiv-final.${file.extension}`,
+  );
 
   console.log("Bild und Redaktionspaket werden in die Freigabekarte übertragen.");
   const response = await fetch(`${PORTAL_URL}/api/editorial/weekly-complete`, {
@@ -176,7 +224,11 @@ async function main() {
   });
   const result = await response.json().catch(() => ({}));
   if (!response.ok || !result.reviewUrl || !result.id) {
-    throw new Error(`Freigabekarte konnte nicht erstellt werden (HTTP ${response.status}).`);
+    const detail =
+      typeof result.error === "string" ? `: ${result.error}` : "";
+    throw new Error(
+      `Freigabekarte konnte nicht erstellt werden (HTTP ${response.status})${detail}.`,
+    );
   }
   const reviewPath = resolve(workDir, "review-result.json");
   await writeFile(reviewPath, `${JSON.stringify(result, null, 2)}\n`, "utf8");

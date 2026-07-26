@@ -410,7 +410,7 @@ async function main() {
 
   const packagePath = resolve(outputDir, "portal-package.json");
   const rawImagePath = resolve(outputDir, "motiv.png");
-  const finalImagePath = resolve(outputDir, "motiv-final.png");
+  const finalImagePath = resolve(outputDir, "motiv-final.jpg");
   const statePath = resolve(outputDir, "run.json");
   await Promise.all([
     writeFile(packagePath, `${JSON.stringify({ ...pkg, version: 1 }, null, 2)}\n`, "utf8"),
