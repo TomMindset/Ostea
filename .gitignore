@@ -1,0 +1,6 @@
+.local-mail/
+.agents/
+freigabeportal/
+redaktion/state.json
+redaktion/entwuerfe/*
+!redaktion/entwuerfe/.gitkeep

@@ -1,0 +1,142 @@
+{
+  "brand": {
+    "name": "OSTEA",
+    "editorial_display_name": "OSTEA Redaktion",
+    "practice_owner": "Sonja Hoffmann"
+  },
+  "mail": {
+    "sender_address": "osteapublishing@gmail.com",
+    "approval_recipient": "s.hoffmann@ostea.de",
+    "live": true,
+    "required_authenticated_profile_match": true,
+    "subject_prefix": "[OSTEA-Freigabe]",
+    "reply_change_requests_allowed": true,
+    "reply_approval_allowed": false
+  },
+  "approval": {
+    "mode": "secure_portal",
+    "live": true,
+    "portal_base_url": "https://ostea-freigabeportal.hoffmann877528.chatgpt.site",
+    "access_status": "public_portal_with_protected_one_time_links",
+    "required_reviewer": "s.hoffmann@ostea.de",
+    "token_valid_days": 7,
+    "require_draft_id": true,
+    "require_version": true,
+    "require_one_time_token": true,
+    "store_token_as_sha256_only": true,
+    "ingest_secret_configured_in_hosting": true,
+    "poll_status_on_each_automation_run": true
+  },
+  "publishing": {
+    "live": false,
+    "website_requires_explicit_approval": true,
+    "facebook_requires_explicit_approval": true,
+    "instagram_requires_explicit_approval": true,
+    "approved_channel_dispatch_route_deployed": true,
+    "duplicate_publication_protection_enabled": true,
+    "ambiguous_meta_results_require_manual_check": true,
+    "website_must_be_live_before_approved_social_channels": true,
+    "publish_on_fixed_weekday": false,
+    "publish_window": "Naechster Werktag zwischen 09:00 und 11:00 Uhr nach Freigabe",
+    "facebook_delay_minutes": 15,
+    "instagram_delay_minutes": 20
+  },
+  "images": {
+    "ai_generated_visible_label_required": true,
+    "ai_generated_visible_label_text": "KI-generiert",
+    "label_must_be_part_of_final_image_pixels": true,
+    "label_placement": "unten rechts innerhalb der Sicherheitszone",
+    "label_minimum_contrast_ratio": 4.5,
+    "label_minimum_font_height_percent": 2.5,
+    "apply_label_after_generation": true,
+    "block_approval_if_label_missing": true,
+    "block_publication_if_label_missing": true
+  },
+  "meta": {
+    "live": false,
+    "public_publication_server_gate_enabled": false,
+    "non_public_write_test_passed": true,
+    "business_portfolio_configured": true,
+    "accounts_linked": true,
+    "oauth_endpoints_deployed": true,
+    "portal_public_for_meta_callbacks": true,
+    "secure_meta_settings_form_deployed": true,
+    "mobile_oauth_handoff_deployed": true,
+    "mobile_oauth_handoff_valid_minutes": 15,
+    "mobile_oauth_handoff_one_time": true,
+    "messaging_permissions_enabled": false,
+    "oauth": {
+      "redirect_uri": "https://ostea-freigabeportal.hoffmann877528.chatgpt.site/api/meta/oauth/callback",
+      "deauthorization_callback_url": "https://ostea-freigabeportal.hoffmann877528.chatgpt.site/api/meta/deauthorize",
+      "data_deletion_request_url": "https://ostea-freigabeportal.hoffmann877528.chatgpt.site/api/meta/data-deletion"
+    },
+    "facebook": {
+      "page_id": "1233044893228412",
+      "public_profile_reference_id": "61592114716986",
+      "page_url": "https://www.facebook.com/profile.php?id=61592114716986",
+      "source_url": "https://m.facebook.com/profile.php?id=61592114716986",
+      "api_connection_verified": true
+    },
+    "instagram": {
+      "username": "ostea.osteopathie",
+      "profile_url": "https://www.instagram.com/ostea.osteopathie/",
+      "api_account_id": "17841438043600514",
+      "api_eligibility_verified": true
+    },
+    "developer_app": {
+      "created": true,
+      "configured": true,
+      "app_id": "1047438204438097",
+      "app_secret_configured_in_hosting": false,
+      "app_secret_configured_in_portal": true,
+      "access_token_configured_in_hosting": true,
+      "system_user_name": "Ostea-Publishing",
+      "system_user_id": "122093088981425294",
+      "read_only_connection_test_passed": true,
+      "facebook_unpublished_write_test_passed": true,
+      "facebook_test_post_deleted": true,
+      "instagram_container_write_test_passed": true,
+      "instagram_test_container_published": false,
+      "oauth_redirect_settings_saved_and_validated": true,
+      "graph_api_version_configured": true,
+      "graph_api_version_configured_in_portal": true,
+      "login_configuration_id": "1716090582996609",
+      "login_configuration_id_configured_in_hosting": true,
+      "required_permissions": [
+        "pages_show_list",
+        "pages_read_engagement",
+        "pages_manage_posts",
+        "instagram_basic",
+        "instagram_content_publish"
+      ]
+    }
+  },
+  "editorial": {
+    "timezone": "Europe/Berlin",
+    "cadence": "weekly",
+    "research_start": "Montag 07:30 Uhr",
+    "approval_target": "Montag bis 11:00 Uhr",
+    "minimum_sources": 3,
+    "minimum_high_level_source_if_available": 1,
+    "recent_research_years": 5,
+    "cloud_automation": {
+      "provider": "github_actions",
+      "workflow": ".github/workflows/ostea-weekly-editorial.yml",
+      "runner": "windows-latest",
+      "live": true,
+      "requires_running_practice_pc": false,
+      "openai_web_research": true,
+      "openai_image_generation": true,
+      "deterministic_ai_label_script": "redaktion/scripts/add-ai-label.ps1",
+      "visual_final_file_check": true,
+      "approval_mail_after_portal_creation": true
+    }
+  },
+  "safety": {
+    "no_healing_promises": true,
+    "include_red_flags": true,
+    "distinguish_evidence_from_naturopathic_context": true,
+    "do_not_publish_without_approval": true,
+    "block_external_actions_while_placeholder_is_active": true
+  }
+}

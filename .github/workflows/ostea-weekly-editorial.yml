@@ -1,7 +1,12 @@
-name: OSTEA weekly editorial trigger
+name: OSTEA weekly editorial
 
 on:
   workflow_dispatch:
+    inputs:
+      run_key:
+        description: "Optionales Redaktionsdatum (YYYY-MM-DD)"
+        required: false
+        type: string
   schedule:
     - cron: "30 7 * * 1"
       timezone: "Europe/Berlin"
@@ -14,44 +19,85 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  trigger:
-    name: Start weekly OSTEA editorial run
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+  editorial:
+    name: Create and send weekly OSTEA approval
+    runs-on: windows-latest
+    timeout-minutes: 60
     env:
       OSTEA_PORTAL_URL: https://ostea-freigabeportal.hoffmann877528.chatgpt.site
+      OPENAI_TEXT_MODEL: gpt-5.6
+      OPENAI_IMAGE_MODEL: gpt-image-2
 
     steps:
-      - name: Validate trigger configuration
-        env:
-          TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
-        shell: bash
-        run: |
-          if [[ -z "${TRIGGER_SECRET}" ]]; then
-            echo "Repository secret OSTEA_WEEKLY_TRIGGER_SECRET is missing."
-            exit 1
-          fi
+      - name: Check out the editorial automation
+        uses: actions/checkout@v4
 
-      - name: Trigger the weekly editorial run
-        env:
-          TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
-          EXTERNAL_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
-        shell: bash
-        run: |
-          scheduled_for="$(TZ=Europe/Berlin date +%F)"
-          payload="$(printf '{"runKey":"%s","source":"github-actions","externalRunId":"%s"}' \
-            "${scheduled_for}" "${EXTERNAL_RUN_ID}")"
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
 
-          curl \
-            --fail-with-body \
-            --silent \
-            --show-error \
-            --retry 3 \
-            --retry-all-errors \
-            --connect-timeout 15 \
-            --max-time 180 \
-            --request POST \
-            --header "Authorization: Bearer ${TRIGGER_SECRET}" \
-            --header "Content-Type: application/json" \
-            --data "${payload}" \
-            "${OSTEA_PORTAL_URL}/api/editorial/weekly-trigger"
+      - name: Validate protected configuration
+        shell: pwsh
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+          OSTEA_GMAIL_APP_PASSWORD: ${{ secrets.OSTEA_GMAIL_APP_PASSWORD }}
+        run: |
+          $missing = @()
+          if ([string]::IsNullOrWhiteSpace($env:OPENAI_API_KEY)) {
+            $missing += "OPENAI_API_KEY"
+          }
+          if ([string]::IsNullOrWhiteSpace($env:OSTEA_WEEKLY_TRIGGER_SECRET)) {
+            $missing += "OSTEA_WEEKLY_TRIGGER_SECRET"
+          }
+          if ([string]::IsNullOrWhiteSpace($env:OSTEA_GMAIL_APP_PASSWORD)) {
+            $missing += "OSTEA_GMAIL_APP_PASSWORD"
+          }
+          if ($missing.Count -gt 0) {
+            throw "Fehlende Repository-Secrets: $($missing -join ', ')"
+          }
+
+      - name: Research, write and create the clean base image
+        id: prepare
+        shell: pwsh
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+          OSTEA_EXTERNAL_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+          OSTEA_RUN_KEY: ${{ github.event.inputs.run_key }}
+        run: |
+          node redaktion/scripts/prepare-weekly.mjs `
+            --output-dir "$env:RUNNER_TEMP\ostea-editorial"
+
+      - name: Add the mandatory AI label to final pixels
+        if: steps.prepare.outputs.should_continue == 'true'
+        shell: pwsh
+        run: |
+          ./redaktion/scripts/add-ai-label.ps1 `
+            -InputPath "${{ steps.prepare.outputs.raw_image }}" `
+            -OutputPath "${{ steps.prepare.outputs.final_image }}"
+
+      - name: Visually verify and create the approval card
+        id: finalize
+        if: steps.prepare.outputs.should_continue == 'true'
+        shell: pwsh
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+        run: |
+          node redaktion/scripts/finalize-weekly.mjs `
+            --work-dir "${{ steps.prepare.outputs.work_dir }}"
+
+      - name: Send Sonja the approval card
+        if: steps.prepare.outputs.should_continue == 'true'
+        shell: pwsh
+        env:
+          OSTEA_GMAIL_APP_PASSWORD: ${{ secrets.OSTEA_GMAIL_APP_PASSWORD }}
+          OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+        run: |
+          python redaktion/scripts/send-approval-mail.py `
+            --review "${{ steps.finalize.outputs.review_result }}" `
+            --package "${{ steps.prepare.outputs.work_dir }}\portal-package.json" `
+            --template "redaktion\templates\freigabe-mail.html" `
+            --run-state "${{ steps.prepare.outputs.work_dir }}\run.json"
