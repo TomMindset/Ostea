@@ -355,8 +355,9 @@ async function createBaseImage(imagePrompt) {
 
 Create only the clean base motif. Do not render any text, letters, numbers,
 logos, labels, captions, signatures or watermarks anywhere in the image.
-Square editorial composition with a calm safety zone in the lower right.`,
-    size: "1024x1024",
+Landscape editorial composition with the main subject near the center and
+calm crop-safe areas on every edge.`,
+    size: "1536x1024",
     quality: "medium",
     output_format: "png",
     n: 1,
@@ -370,6 +371,65 @@ Square editorial composition with a calm safety zone in the lower right.`,
     throw new Error("Die Bildgenerierung lieferte kein gültiges PNG.");
   }
   return bytes;
+}
+
+async function classifyPhotoLabelRequirement(bytes) {
+  try {
+    const response = await openAiJson("/responses", {
+      model: TEXT_MODEL,
+      reasoning: { effort: "low" },
+      input: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "input_text",
+              text: `Prüfe dieses KI-erzeugte Grundmotiv für die OSTEA-Kennzeichnung.
+"deepfakeRisk" ist genau dann true, wenn eine fotorealistische menschliche
+Person zu sehen ist, die wie die Aufnahme eines realen Menschen wirken könnte.
+Reine Illustrationen, Gegenstände, Räume, Körperdiagramme oder abstrakte
+Grafiken ohne fotorealistische Person haben deepfakeRisk=false. Antworte
+ausschließlich nach Schema.`,
+            },
+            {
+              type: "input_image",
+              image_url: `data:image/png;base64,${bytes.toString("base64")}`,
+              detail: "high",
+            },
+          ],
+        },
+      ],
+      text: {
+        format: {
+          type: "json_schema",
+          name: "ostea_deepfake_risk_check",
+          strict: true,
+          schema: {
+            type: "object",
+            additionalProperties: false,
+            required: ["deepfakeRisk", "reason"],
+            properties: {
+              deepfakeRisk: { type: "boolean" },
+              reason: { type: "string" },
+            },
+          },
+        },
+      },
+    });
+    const result = JSON.parse(responseOutputText(response));
+    return {
+      required: result.deepfakeRisk === true,
+      reason: String(result.reason || "").slice(0, 500),
+      method: "OpenAI-Sichtprüfung des KI-Grundmotivs",
+    };
+  } catch {
+    return {
+      required: true,
+      reason:
+        "Die automatische Risikoprüfung war nicht eindeutig; Kennzeichnung vorsorglich aktiviert.",
+      method: "Sicherheitsrückfall bei fehlender Sichtprüfung",
+    };
+  }
 }
 
 async function main() {
@@ -407,26 +467,35 @@ async function main() {
   const pkg = await createEditorialPackage({ plan, config, runKey });
   console.log("Das textfreie Grundmotiv wird erzeugt.");
   const image = await createBaseImage(pkg.imagePrompt);
+  console.log("Das Grundmotiv wird auf ein mögliches Deepfake-Risiko geprüft.");
+  const photoDisclosure = await classifyPhotoLabelRequirement(image);
 
   const packagePath = resolve(outputDir, "portal-package.json");
   const rawImagePath = resolve(outputDir, "motiv.png");
-  const finalImagePath = resolve(outputDir, "motiv-final.jpg");
+  const finalAssetsDirectory = resolve(outputDir, "final-assets");
+  const assetManifestPath = resolve(outputDir, "asset-manifest.json");
   const statePath = resolve(outputDir, "run.json");
   await Promise.all([
     writeFile(packagePath, `${JSON.stringify({ ...pkg, version: 1 }, null, 2)}\n`, "utf8"),
     writeFile(rawImagePath, image),
     writeFile(
       statePath,
-      `${JSON.stringify({ runKey, packagePath, rawImagePath, finalImagePath }, null, 2)}\n`,
+      `${JSON.stringify({
+        runKey,
+        packagePath,
+        rawImagePath,
+        finalAssetsDirectory,
+        assetManifestPath,
+        photoLabelRequired: photoDisclosure.required,
+        photoLabelAssessment: photoDisclosure,
+      }, null, 2)}\n`,
       "utf8",
     ),
   ]);
 
   await githubOutput("should_continue", "true");
   await githubOutput("work_dir", outputDir);
-  await githubOutput("raw_image", rawImagePath);
-  await githubOutput("final_image", finalImagePath);
-  console.log("Redaktionspaket und Grundmotiv sind zur Kennzeichnung bereit.");
+  console.log("Redaktionspaket und Grundmotiv sind für die Kanalbilder bereit.");
 }
 
 main().catch((error) => {

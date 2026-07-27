@@ -70,15 +70,21 @@ jobs:
           node redaktion/scripts/prepare-weekly.mjs `
             --output-dir "$env:RUNNER_TEMP\ostea-editorial"
 
-      - name: Add the mandatory AI label to final pixels
+      - name: Create the final channel images
         if: steps.prepare.outputs.should_continue == 'true'
         shell: pwsh
         run: |
-          ./redaktion/scripts/add-ai-label.ps1 `
-            -InputPath "${{ steps.prepare.outputs.raw_image }}" `
-            -OutputPath "${{ steps.prepare.outputs.final_image }}"
+          $state = Get-Content `
+            "${{ steps.prepare.outputs.work_dir }}\run.json" `
+            -Raw | ConvertFrom-Json
+          ./redaktion/scripts/create-final-assets.ps1 `
+            -BaseImagePath $state.rawImagePath `
+            -PackagePath $state.packagePath `
+            -OutputDirectory $state.finalAssetsDirectory `
+            -ManifestPath $state.assetManifestPath `
+            -PhotoLabelRequired ([bool]$state.photoLabelRequired)
 
-      - name: Visually verify the final image and create the approval card
+      - name: Visually verify all final images and create the approval card
         id: finalize
         if: steps.prepare.outputs.should_continue == 'true'
         shell: pwsh

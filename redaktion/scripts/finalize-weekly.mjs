@@ -3,7 +3,7 @@ import {
   readFile,
   writeFile,
 } from "node:fs/promises";
-import { resolve } from "node:path";
+import { join, resolve } from "node:path";
 
 const PORTAL_URL = requiredEnv("OSTEA_PORTAL_URL").replace(/\/+$/, "");
 const TRIGGER_SECRET = requiredEnv("OSTEA_WEEKLY_TRIGGER_SECRET");
@@ -97,8 +97,17 @@ function imageInfo(bytes) {
   }
 }
 
-async function verifyFinalImage(bytes) {
+async function verifyFinalImage(bytes, asset) {
   const file = imageInfo(bytes);
+  const expectedText = Array.isArray(asset.expectedText)
+    ? asset.expectedText.map((text) => String(text))
+    : [];
+  const labelInstruction = asset.labelRequired
+    ? `Der exakte Text "KI-generiert" muss gut lesbar, vollständig, nicht
+angeschnitten und unten rechts innerhalb des Bildes stehen.`
+    : `Für diese rein grafisch erzeugte Carousel-Karte ist kein
+"KI-generiert"-Hinweis erforderlich. Bewerte die Label-Felder entsprechend
+dem tatsächlich sichtbaren Bild, aber lehne das Fehlen eines Labels nicht ab.`;
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
@@ -114,11 +123,16 @@ async function verifyFinalImage(bytes) {
           content: [
             {
               type: "input_text",
-              text: `Prüfe ausschließlich die tatsächlich angehängte finale PNG-Datei.
-Der exakte Text "KI-generiert" muss gut lesbar, vollständig, nicht angeschnitten
-und unten rechts innerhalb des Bildes stehen. Außer diesem Pflichttext darf im
-Grundmotiv keine weitere Schrift sichtbar sein. Antworte streng nach Schema.
-Setze ein Prüffeld nur dann auf true, wenn es visuell eindeutig erfüllt ist.`,
+              text: `Prüfe ausschließlich die tatsächlich angehängte finale Bilddatei.
+${labelInstruction}
+
+Erwartete sichtbare Texte:
+${JSON.stringify(expectedText)}
+
+Alle erwarteten Texte müssen vollständig und gut lesbar sein; Zeilenumbrüche
+sind erlaubt. Abgesehen von diesen erwarteten Texten darf keine weitere Schrift
+sichtbar sein. Antworte streng nach Schema. Setze ein Prüffeld nur dann auf
+true, wenn es visuell eindeutig erfüllt ist.`,
             },
             {
               type: "input_image",
@@ -142,6 +156,7 @@ Setze ein Prüffeld nur dann auf true, wenn es visuell eindeutig erfüllt ist.`,
               "labelReadable",
               "labelBottomRight",
               "labelCropped",
+              "expectedTextPresent",
               "noUnexpectedText",
               "notes",
             ],
@@ -151,6 +166,7 @@ Setze ein Prüffeld nur dann auf true, wenn es visuell eindeutig erfüllt ist.`,
               labelReadable: { type: "boolean" },
               labelBottomRight: { type: "boolean" },
               labelCropped: { type: "boolean" },
+              expectedTextPresent: { type: "boolean" },
               noUnexpectedText: { type: "boolean" },
               notes: { type: "string" },
             },
@@ -164,11 +180,13 @@ Setze ein Prüffeld nur dann auf true, wenn es visuell eindeutig erfüllt ist.`,
   }
   const verification = JSON.parse(responseOutputText(await response.json()));
   if (
-    verification.labelVisible !== true ||
-    verification.labelExact !== true ||
-    verification.labelReadable !== true ||
-    verification.labelBottomRight !== true ||
-    verification.labelCropped !== false ||
+    (asset.labelRequired &&
+      (verification.labelVisible !== true ||
+        verification.labelExact !== true ||
+        verification.labelReadable !== true ||
+        verification.labelBottomRight !== true ||
+        verification.labelCropped !== false)) ||
+    verification.expectedTextPresent !== true ||
     verification.noUnexpectedText !== true
   ) {
     throw new Error(
@@ -184,39 +202,50 @@ async function main() {
   const pkg = JSON.parse(
     await readFile(resolve(workDir, "portal-package.json"), "utf8"),
   );
-  const image = await readFile(resolve(state.finalImagePath));
-  const file = imageInfo(image);
-
-  console.log("Die final gekennzeichnete Bilddatei wird visuell geprüft.");
-  const verification = await verifyFinalImage(image);
-  pkg.payload.instagram.imageDisclosure = {
-    aiGenerated: true,
-    visibleText: "KI-generiert",
-    mustBeInFinalPixels: true,
-    verified: true,
-    verifiedAt: new Date().toISOString(),
-    verificationMethod:
-      "OSTEA add-ai-label.ps1 plus visuelle OpenAI-Dateiprüfung",
-    width: file.width,
-    height: file.height,
-  };
-  await writeFile(
-    resolve(workDir, "portal-package.json"),
-    `${JSON.stringify(pkg, null, 2)}\n`,
-    "utf8",
+  const manifest = JSON.parse(
+    await readFile(resolve(state.assetManifestPath), "utf8"),
   );
+  if (!Array.isArray(manifest.assets) || manifest.assets.length < 3) {
+    throw new Error("Das Manifest der finalen Kanalbilder ist unvollständig.");
+  }
+
+  const verifiedAssets = [];
+  for (const asset of manifest.assets) {
+    const imagePath = join(state.finalAssetsDirectory, asset.fileName);
+    const image = await readFile(imagePath);
+    const file = imageInfo(image);
+    console.log(
+      `Finale Bilddatei wird visuell geprüft: ${asset.channel} ${asset.position}.`,
+    );
+    const verification = await verifyFinalImage(image, asset);
+    verifiedAssets.push({
+      ...asset,
+      verification,
+      image,
+      file,
+    });
+  }
 
   const form = new FormData();
   form.set("runKey", state.runKey);
   form.set("package", JSON.stringify(pkg));
-  form.set("verification", JSON.stringify(verification));
   form.set(
-    "image",
-    new Blob([image], { type: file.contentType }),
-    `motiv-final.${file.extension}`,
+    "assetManifest",
+    JSON.stringify(
+      verifiedAssets.map(({ image, file, ...asset }) => asset),
+    ),
   );
+  for (const asset of verifiedAssets) {
+    form.append(
+      "images",
+      new Blob([asset.image], { type: asset.file.contentType }),
+      asset.fileName,
+    );
+  }
 
-  console.log("Bild und Redaktionspaket werden in die Freigabekarte übertragen.");
+  console.log(
+    "Alle finalen Kanalbilder und das Redaktionspaket werden übertragen.",
+  );
   const response = await fetch(`${PORTAL_URL}/api/editorial/weekly-complete`, {
     method: "POST",
     headers: { Authorization: `Bearer ${TRIGGER_SECRET}` },
