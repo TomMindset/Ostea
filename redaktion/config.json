@@ -37,7 +37,8 @@
     "ambiguous_meta_results_require_manual_check": true,
     "website_must_be_live_before_approved_social_channels": true,
     "publish_on_fixed_weekday": false,
-    "publish_window": "Naechster Werktag zwischen 09:00 und 11:00 Uhr nach Freigabe",
+    "publish_window": "Fruehestens am naechsten Werktag zwischen 09:00 und 11:00 Uhr; hoechstens ein Artikel pro Berliner Kalenderwoche",
+    "maximum_website_publications_per_berlin_week": 1,
     "facebook_delay_minutes": 15,
     "instagram_delay_minutes": 20
   },

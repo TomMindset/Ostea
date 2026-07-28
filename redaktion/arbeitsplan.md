@@ -26,7 +26,8 @@ keine ärztliche oder therapeutische Diagnose.
    Wirkversprechen bearbeiten lässt.
 
 Der Montag ist der feste Vorbereitungstermin. Der Veröffentlichungstag ist
-nicht auf Dienstag festgelegt, sondern richtet sich nach Sonjas Freigabe.
+nicht auf Dienstag festgelegt, sondern richtet sich nach Sonjas Freigabe und
+dem nächsten freien wöchentlichen Veröffentlichungsplatz.
 
 ### Montagvormittag: Redaktionspaket
 
@@ -81,10 +82,13 @@ formal gültige Portalentscheidung erfolgt keine Veröffentlichung.
 
 ### Veröffentlichung
 
-Nach Freigabe wird der Artikel am nächsten geeigneten Werktag zwischen 09:00
-und 11:00 Uhr veröffentlicht. Der Facebook-Teaser folgt etwa 15 Minuten später
-und verlinkt auf den Artikel. Die Freigabe gilt nur für den vorgelegten Inhalt;
-inhaltliche Änderungen erfordern eine neue Freigabe.
+Nach Freigabe wird der Artikel frühestens am nächsten geeigneten Werktag
+zwischen 09:00 und 11:00 Uhr veröffentlicht. Pro Berliner Kalenderwoche wird
+höchstens ein neuer Artikel veröffentlicht. Warten mehrere freigegebene Pakete,
+werden sie nach dem Zeitpunkt ihrer Freigabe auf die folgenden freien Wochen
+verteilt. Der Facebook-Teaser folgt etwa 15 Minuten nach dem Artikel;
+Instagram folgt nach insgesamt etwa 20 Minuten. Die Freigabe gilt nur für den
+vorgelegten Inhalt; inhaltliche Änderungen erfordern eine neue Freigabe.
 
 ## 3. Quellenstandard
 

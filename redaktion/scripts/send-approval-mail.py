@@ -94,7 +94,10 @@ def build_message(review: dict, package: dict, template: str) -> EmailMessage:
     values = {
         "titel": title,
         "zielgruppe": audience,
-        "fenster": "Nächster Werktag zwischen 09:00 und 11:00 Uhr nach Freigabe",
+        "fenster": (
+            "Frühestens am nächsten Werktag zwischen 09:00 und 11:00 Uhr; "
+            "höchstens ein Artikel pro Kalenderwoche"
+        ),
         "kurzfassung": summary,
         "evidenzhinweis": evidence,
         "review_url": review_url,
