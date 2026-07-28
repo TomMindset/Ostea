@@ -1,0 +1,140 @@
+name: OSTEA approved publication
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Nur vorbereiten und prüfen, nichts veröffentlichen"
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: "*/15 9-10 * * 1-5"
+      timezone: "Europe/Berlin"
+    - cron: "0 11 * * 1-5"
+      timezone: "Europe/Berlin"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ostea-approved-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish a specifically approved OSTEA package
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      OSTEA_PORTAL_URL: https://ostea-freigabeportal.hoffmann877528.chatgpt.site
+      OPENAI_TEXT_MODEL: gpt-5.6
+
+    steps:
+      - name: Check out the approved website repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Validate protected configuration
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+        run: |
+          test -n "$OPENAI_API_KEY" || {
+            echo "::error::Repository-Secret OPENAI_API_KEY fehlt."
+            exit 1
+          }
+          test -n "$OSTEA_WEEKLY_TRIGGER_SECRET" || {
+            echo "::error::Repository-Secret OSTEA_WEEKLY_TRIGGER_SECRET fehlt."
+            exit 1
+          }
+
+      - name: Read the approval and verify every final image again
+        id: prepare
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+        run: |
+          node redaktion/scripts/publish-approved.mjs prepare \
+            --output-dir "$RUNNER_TEMP/ostea-publication" \
+            ${{ inputs.dry_run && '--dry-run' || '' }}
+
+      - name: Confirm the dry run
+        if: steps.prepare.outputs.should_publish == 'true' && inputs.dry_run
+        run: |
+          echo "Testlauf erfolgreich: Freigabe, Artikel und finale Bilddateien sind publikationsbereit."
+
+      - name: Commit the approved website article
+        id: website
+        if: steps.prepare.outputs.should_publish == 'true' && !inputs.dry_run
+        shell: bash
+        run: |
+          git config user.name "OSTEA Publishing"
+          git config user.email "osteapublishing@gmail.com"
+          git add index.html sitemap.xml assets/ratgeber.css ratgeber
+          if git diff --cached --quiet; then
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            echo "Der freigegebene Website-Stand ist bereits eingecheckt."
+          else
+            git commit -m "Publish approved OSTEA article"
+            git push origin HEAD:main
+            echo "committed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Wait until the exact approved article is public
+        if: steps.prepare.outputs.should_publish == 'true' && !inputs.dry_run
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+        run: |
+          node redaktion/scripts/publish-approved.mjs wait \
+            --state "${{ steps.prepare.outputs.state_file }}"
+
+      - name: Record the website publication
+        if: steps.prepare.outputs.should_publish == 'true' && !inputs.dry_run
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+        run: |
+          node redaktion/scripts/publish-approved.mjs dispatch \
+            --state "${{ steps.prepare.outputs.state_file }}" \
+            --channel website
+
+      - name: Keep the approved Facebook offset
+        if: steps.prepare.outputs.facebook_pending == 'true' && !inputs.dry_run
+        run: sleep 900
+
+      - name: Publish the approved Facebook teaser and final image
+        if: steps.prepare.outputs.facebook_pending == 'true' && !inputs.dry_run
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+        run: |
+          node redaktion/scripts/publish-approved.mjs dispatch \
+            --state "${{ steps.prepare.outputs.state_file }}" \
+            --channel facebook
+
+      - name: Keep the approved Instagram offset
+        if: steps.prepare.outputs.instagram_pending == 'true' && !inputs.dry_run
+        shell: bash
+        run: |
+          if [ "${{ steps.prepare.outputs.facebook_pending }}" = "true" ]; then
+            sleep 300
+          else
+            sleep 1200
+          fi
+
+      - name: Publish the approved Instagram carousel
+        if: steps.prepare.outputs.instagram_pending == 'true' && !inputs.dry_run
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+        run: |
+          node redaktion/scripts/publish-approved.mjs dispatch \
+            --state "${{ steps.prepare.outputs.state_file }}" \
+            --channel instagram

@@ -28,7 +28,7 @@
     "poll_status_on_each_automation_run": true
   },
   "publishing": {
-    "live": false,
+    "live": true,
     "website_requires_explicit_approval": true,
     "facebook_requires_explicit_approval": true,
     "instagram_requires_explicit_approval": true,
@@ -53,8 +53,8 @@
     "block_publication_if_label_missing": true
   },
   "meta": {
-    "live": false,
-    "public_publication_server_gate_enabled": false,
+    "live": true,
+    "public_publication_server_gate_enabled": true,
     "non_public_write_test_passed": true,
     "business_portfolio_configured": true,
     "accounts_linked": true,
