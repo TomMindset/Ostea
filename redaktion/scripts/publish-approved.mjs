@@ -590,6 +590,9 @@ async function prepare() {
   }
 
   const assets = candidate.payload?.media?.assets ?? [];
+  console.log(
+    `Freigegebene Kanäle: ${candidate.approvedChannels.join(", ")}; finale Dateien: ${assets.length}.`,
+  );
   const requiredAssets = assets.filter((asset) =>
     candidate.approvedChannels.includes(asset.channel),
   );
