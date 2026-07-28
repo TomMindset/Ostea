@@ -251,7 +251,13 @@ function validatePackage(pkg) {
   return pkg;
 }
 
-async function createEditorialPackage({ plan, config, runKey, topicBrief }) {
+async function createEditorialPackage({
+  plan,
+  config,
+  runKey,
+  researchDate,
+  topicBrief,
+}) {
   const topicDirection = topicBrief
     ? `Verbindliche Themenvorgabe für diesen Wiederaufnahmelauf:
 ${topicBrief}
@@ -276,7 +282,7 @@ Recherche:
   weiterhin maßgeblich.
 - Erfinde keine URL, keinen Studientyp, keine Population und kein Ergebnis.
 - Notiere zu jeder Quelle in "note": Studientyp/Quellebene, untersuchte Gruppe,
-  Kernaussage, wichtigste Grenze und Abrufdatum ${runKey}.
+  Kernaussage, wichtigste Grenze und Abrufdatum ${researchDate}.
 - Naturheilkundliche Einordnungen ausdrücklich von klinisch gesicherter
   Evidenz unterscheiden.
 
@@ -445,6 +451,7 @@ async function main() {
   const outputDir = resolve(argument("--output-dir"));
   await mkdir(outputDir, { recursive: true });
   const runKey = process.env.OSTEA_RUN_KEY?.trim() || berlinRunKey();
+  const researchDate = berlinRunKey();
   const topicBrief = String(process.env.OSTEA_TOPIC_BRIEF || "")
     .trim()
     .slice(0, 2000);
@@ -480,6 +487,7 @@ async function main() {
     plan,
     config,
     runKey,
+    researchDate,
     topicBrief,
   });
   console.log("Das textfreie Grundmotiv wird erzeugt.");

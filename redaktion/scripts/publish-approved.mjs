@@ -76,6 +76,15 @@ function slugify(value) {
   return slug;
 }
 
+function berlinCalendarDay(value = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "Europe/Berlin",
+  }).format(new Date(value));
+}
+
 function imageInfo(bytes) {
   const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
   if (bytes.length >= 24 && bytes.subarray(0, 8).equals(pngSignature)) {
@@ -625,7 +634,7 @@ async function prepare() {
     throw new Error("Das freigegebene Website-Titelbild fehlt.");
   }
   const websiteFile = downloaded.get(websiteAsset.id);
-  const slug = `${candidate.runKey}-${slugify(candidate.title)}`;
+  const slug = `${berlinCalendarDay(candidate.decidedAt || new Date())}-${slugify(candidate.title)}`;
   const articleDirectory = join(ROOT, "wissen", slug);
   await mkdir(articleDirectory, { recursive: true });
   const heroFile = `hero.${websiteFile.info.extension}`;
