@@ -1,15 +1,15 @@
-.ratgeber-home {
+.wissen-home {
   width: 100%;
   max-width: none;
 }
 
-.ratgeber-grid {
+.wissen-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
-.ratgeber-card {
+.wissen-card {
   overflow: hidden;
   background: var(--white);
   border: 1px solid var(--line);
@@ -17,43 +17,43 @@
   box-shadow: 0 12px 32px rgba(23, 50, 74, 0.08);
 }
 
-.ratgeber-card-image {
+.wissen-card-image {
   display: block;
   background: var(--mist);
 }
 
-.ratgeber-card-image img {
+.wissen-card-image img {
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
 }
 
-.ratgeber-card-body {
+.wissen-card-body {
   padding: 22px;
 }
 
-.ratgeber-card-body h3 {
+.wissen-card-body h3 {
   margin-bottom: 12px;
 }
 
-.ratgeber-card-body h3 a {
+.wissen-card-body h3 a {
   color: var(--ink);
   text-decoration: none;
 }
 
-.ratgeber-card-body h3 a:hover,
-.ratgeber-card-body h3 a:focus {
+.wissen-card-body h3 a:hover,
+.wissen-card-body h3 a:focus {
   text-decoration: underline;
   text-decoration-color: var(--accent);
   text-underline-offset: 4px;
 }
 
-.ratgeber-card-body > p:not(.eyebrow),
-.ratgeber-card-body > span {
+.wissen-card-body > p:not(.eyebrow),
+.wissen-card-body > span {
   color: var(--muted);
 }
 
-.ratgeber-card-body > span {
+.wissen-card-body > span {
   display: block;
   margin-top: 18px;
   font-size: 0.86rem;
@@ -204,7 +204,7 @@
 }
 
 @media (max-width: 900px) {
-  .ratgeber-grid,
+  .wissen-grid,
   .article-hero,
   .article-layout {
     grid-template-columns: 1fr;

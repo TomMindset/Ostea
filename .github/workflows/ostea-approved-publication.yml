@@ -76,7 +76,7 @@ jobs:
         run: |
           git config user.name "OSTEA Publishing"
           git config user.email "osteapublishing@gmail.com"
-          git add index.html sitemap.xml assets/ratgeber.css ratgeber
+          git add index.html sitemap.xml assets/wissen.css wissen
           if git diff --cached --quiet; then
             echo "committed=false" >> "$GITHUB_OUTPUT"
             echo "Der freigegebene Website-Stand ist bereits eingecheckt."

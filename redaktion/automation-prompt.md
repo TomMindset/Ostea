@@ -116,7 +116,7 @@ tatsächlich auszuliefernde Datei. Fehlt der sichtbare Hinweis `KI-generiert`
 oder wurde er durch Export beziehungsweise Zuschnitt entfernt, stoppe den
 betroffenen Kanal.
 Erstelle eine statische Artikelseite im Stil der vorhandenen OSTEA-Seiten,
-verlinke sie in einem Ratgeberbereich und ergänze die Sitemap. Prüfe HTML,
+verlinke sie im Bereich „OSTEA Wissen“ und ergänze die Sitemap. Prüfe HTML,
 interne Links, strukturierte Daten, Mobilansicht und die Quellenangaben.
 
 Veröffentliche Facebook und Instagram erst nach erfolgreicher

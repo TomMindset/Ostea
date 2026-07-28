@@ -274,7 +274,7 @@ function articleMetadata(candidate, slug, heroFile) {
     reviewId: candidate.reviewId,
     runKey: candidate.runKey,
     slug,
-    url: `${SITE_ORIGIN}/ratgeber/${slug}/`,
+    url: `${SITE_ORIGIN}/wissen/${slug}/`,
     title: candidate.title,
     audience: candidate.audience,
     summary: candidate.payload.summary,
@@ -356,7 +356,7 @@ function renderArticle(candidate, metadata) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${html(candidate.title)} | OSTEA Ratgeber</title>
+    <title>${html(candidate.title)} | OSTEA Wissen</title>
     <meta name="description" content="${html(description)}">
     <meta name="ostea-review-id" content="${html(candidate.reviewId)}">
     <link rel="canonical" href="${metadata.url}">
@@ -366,11 +366,11 @@ function renderArticle(candidate, metadata) {
     <meta property="og:url" content="${metadata.url}">
     <meta property="og:image" content="${metadata.url}${metadata.heroFile}">
     <link rel="stylesheet" href="../../assets/symptom-pages.css">
-    <link rel="stylesheet" href="../../assets/ratgeber.css">
+    <link rel="stylesheet" href="../../assets/wissen.css">
     <script type="application/ld+json">${jsonForHtml(schema)}</script>
   </head>
   <body>
-    <!-- OSTEA_RATGEBER_REVIEW:${html(candidate.reviewId)} -->
+    <!-- OSTEA_WISSEN_REVIEW:${html(candidate.reviewId)} -->
     <a class="skip-link" href="#inhalt">Direkt zum Inhalt</a>
     <header>
       <div class="nav">
@@ -382,7 +382,7 @@ function renderArticle(candidate, metadata) {
           <ul>
             <li><a href="../../#fuer-wen">Für wen</a></li>
             <li><a href="../../#leistungen">Leistungen</a></li>
-            <li><a href="../../#ratgeber">Ratgeber</a></li>
+            <li><a href="../../#wissen">Wissen</a></li>
             <li><a href="../../#kontakt">Kontakt</a></li>
           </ul>
         </nav>
@@ -392,14 +392,14 @@ function renderArticle(candidate, metadata) {
       <nav class="breadcrumb" aria-label="Brotkrumen">
         <ol>
           <li><a href="../../">Startseite</a></li>
-          <li><a href="../../#ratgeber">Ratgeber</a></li>
+          <li><a href="../../#wissen">Wissen</a></li>
           <li aria-current="page">${html(candidate.title)}</li>
         </ol>
       </nav>
       <article>
         <div class="article-hero">
           <div>
-            <p class="eyebrow">${html(article.eyebrow || "OSTEA Ratgeber")}</p>
+            <p class="eyebrow">${html(article.eyebrow || "OSTEA Wissen")}</p>
             <h1>${html(candidate.title)}</h1>
             <p class="lead">${html(article.intro)}</p>
             <p class="article-meta">Für ${html(candidate.audience)} · veröffentlicht am ${html(formatDate(metadata.publishedAt))}</p>
@@ -455,7 +455,7 @@ function renderArticle(candidate, metadata) {
 }
 
 async function readArticleMetadata() {
-  const base = join(ROOT, "ratgeber");
+  const base = join(ROOT, "wissen");
   try {
     const entries = await readdir(base, { withFileTypes: true });
     const records = [];
@@ -468,7 +468,7 @@ async function readArticleMetadata() {
           ),
         );
       } catch {
-        // Andere Dateien im Ratgeber-Verzeichnis werden nicht verändert.
+        // Andere Dateien im Wissen-Verzeichnis werden nicht verändert.
       }
     }
     return records.sort(
@@ -486,54 +486,54 @@ function renderHomepageSection(records) {
     .slice(0, 6)
     .map(
       (record) => `
-          <article class="ratgeber-card">
-            <a class="ratgeber-card-image" href="/ratgeber/${html(record.slug)}/">
-              <img src="/ratgeber/${html(record.slug)}/${html(record.heroFile)}" alt="${html(record.heroAlt)}" loading="lazy">
+          <article class="wissen-card">
+            <a class="wissen-card-image" href="/wissen/${html(record.slug)}/">
+              <img src="/wissen/${html(record.slug)}/${html(record.heroFile)}" alt="${html(record.heroAlt)}" loading="lazy">
             </a>
-            <div class="ratgeber-card-body">
-              <p class="eyebrow">${html(record.eyebrow || "OSTEA Ratgeber")}</p>
-              <h3><a href="/ratgeber/${html(record.slug)}/">${html(record.title)}</a></h3>
+            <div class="wissen-card-body">
+              <p class="eyebrow">${html(record.eyebrow || "OSTEA Wissen")}</p>
+              <h3><a href="/wissen/${html(record.slug)}/">${html(record.title)}</a></h3>
               <p>${html(record.summary)}</p>
               <span>${html(formatDate(record.publishedAt))} · ${html(record.audience)}</span>
             </div>
           </article>`,
     )
     .join("\n");
-  return `<!-- OSTEA_RATGEBER_START -->
-      <section id="ratgeber" class="band ratgeber-home" aria-labelledby="ratgeber-title">
+  return `<!-- OSTEA_WISSEN_START -->
+      <section id="wissen" class="band wissen-home" aria-labelledby="wissen-title">
         <div class="section-inner">
           <div class="section-head">
             <div>
               <p class="eyebrow">Wissen für den Alltag</p>
-              <h2 id="ratgeber-title">OSTEA Ratgeber</h2>
+              <h2 id="wissen-title">OSTEA Wissen</h2>
             </div>
             <p>Wissenschaftlich und naturheilkundlich eingeordnete Gesundheitstipps für Mütter, Kinder und ältere Menschen – verständlich, praktisch und ohne Heilversprechen.</p>
           </div>
-          <div class="ratgeber-grid">${cards}
+          <div class="wissen-grid">${cards}
           </div>
         </div>
       </section>
-      <!-- OSTEA_RATGEBER_END -->`;
+      <!-- OSTEA_WISSEN_END -->`;
 }
 
 async function updateHomepage() {
   const path = join(ROOT, "index.html");
   let source = await readFile(path, "utf8");
-  if (!source.includes('href="assets/ratgeber.css"')) {
+  if (!source.includes('href="assets/wissen.css"')) {
     source = source.replace(
       "</head>",
-      '    <link rel="stylesheet" href="assets/ratgeber.css">\n  </head>',
+      '    <link rel="stylesheet" href="assets/wissen.css">\n  </head>',
     );
   }
-  if (!source.includes('href="#ratgeber"')) {
+  if (!source.includes('href="#wissen"')) {
     source = source.replace(
       '<li><a href="#kontakt">Kontakt</a></li>',
-      '<li><a href="#ratgeber">Ratgeber</a></li>\n            <li><a href="#kontakt">Kontakt</a></li>',
+      '<li><a href="#wissen">Wissen</a></li>\n            <li><a href="#kontakt">Kontakt</a></li>',
     );
   }
   const section = renderHomepageSection(await readArticleMetadata());
   const marker =
-    /<!-- OSTEA_RATGEBER_START -->[\s\S]*?<!-- OSTEA_RATGEBER_END -->/;
+    /<!-- OSTEA_WISSEN_START -->[\s\S]*?<!-- OSTEA_WISSEN_END -->/;
   if (marker.test(source)) {
     source = source.replace(marker, section);
   } else {
@@ -626,7 +626,7 @@ async function prepare() {
   }
   const websiteFile = downloaded.get(websiteAsset.id);
   const slug = `${candidate.runKey}-${slugify(candidate.title)}`;
-  const articleDirectory = join(ROOT, "ratgeber", slug);
+  const articleDirectory = join(ROOT, "wissen", slug);
   await mkdir(articleDirectory, { recursive: true });
   const heroFile = `hero.${websiteFile.info.extension}`;
   await writeFile(join(articleDirectory, heroFile), websiteFile.bytes);
@@ -648,7 +648,7 @@ async function prepare() {
     reviewId: candidate.reviewId,
     runKey: candidate.runKey,
     websiteUrl: metadata.url,
-    marker: `OSTEA_RATGEBER_REVIEW:${candidate.reviewId}`,
+    marker: `OSTEA_WISSEN_REVIEW:${candidate.reviewId}`,
     approvedChannels: candidate.approvedChannels,
     publicationStates: Object.fromEntries(
       (candidate.publications || [])
