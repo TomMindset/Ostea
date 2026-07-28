@@ -7,6 +7,10 @@ on:
         description: "Optionales Redaktionsdatum (YYYY-MM-DD)"
         required: false
         type: string
+      topic_brief:
+        description: "Optionale verbindliche Themenvorgabe für einen Wiederaufnahmelauf"
+        required: false
+        type: string
   schedule:
     - cron: "30 7 * * 1"
       timezone: "Europe/Berlin"
@@ -66,6 +70,7 @@ jobs:
           OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
           OSTEA_EXTERNAL_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
           OSTEA_RUN_KEY: ${{ github.event.inputs.run_key }}
+          OSTEA_TOPIC_BRIEF: ${{ github.event.inputs.topic_brief }}
         run: |
           node redaktion/scripts/prepare-weekly.mjs `
             --output-dir "$env:RUNNER_TEMP\ostea-editorial"

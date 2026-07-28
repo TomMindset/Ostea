@@ -251,13 +251,22 @@ function validatePackage(pkg) {
   return pkg;
 }
 
-async function createEditorialPackage({ plan, config, runKey }) {
+async function createEditorialPackage({ plan, config, runKey, topicBrief }) {
+  const topicDirection = topicBrief
+    ? `Verbindliche Themenvorgabe für diesen Wiederaufnahmelauf:
+${topicBrief}
+
+Diese Themenvorgabe hat Vorrang vor dem regulären Wochenfokus. Nutze den
+Arbeitsplan ergänzend für Zielgruppe, Saisonbezug und redaktionelle Grenzen.
+Der neue Beitrag muss eigenständig sein und darf keinen bereits vorbereiteten
+Beitrag in Suchintention, Aufbau oder Kernaussagen bloß duplizieren.`
+    : `Nutze den Monats- und Wochenfokus des Arbeitsplans, prüfe ihn aber anhand
+der aktuellen Online-Recherche. Vermeide Dopplungen mit dem im Plan genannten
+vorherigen Reisethema, falls es inhaltlich bereits abgedeckt ist.`;
   const instructions = `
 Du bist die wissenschaftlich sorgfältige OSTEA-Redaktion für die Praxis von
 Sonja Hoffmann. Erstelle auf Deutsch genau ein neues Wochenpaket für ${runKey}.
-Nutze den Monats- und Wochenfokus des Arbeitsplans, prüfe ihn aber anhand der
-aktuellen Online-Recherche. Vermeide Dopplungen mit dem im Plan genannten
-vorherigen Reisethema, falls es inhaltlich bereits abgedeckt ist.
+${topicDirection}
 
 Recherche:
 - Nutze mindestens drei voneinander unabhängige, tatsächlich geöffnete Quellen.
@@ -436,6 +445,9 @@ async function main() {
   const outputDir = resolve(argument("--output-dir"));
   await mkdir(outputDir, { recursive: true });
   const runKey = process.env.OSTEA_RUN_KEY?.trim() || berlinRunKey();
+  const topicBrief = String(process.env.OSTEA_TOPIC_BRIEF || "")
+    .trim()
+    .slice(0, 2000);
 
   console.log("Wochenstart wird im OSTEA-Portal registriert.");
   const trigger = await portalRequest("/api/editorial/weekly-trigger", {
@@ -464,7 +476,12 @@ async function main() {
     readFile(resolve("redaktion/config.json"), "utf8"),
   ]);
   console.log("Aktuelle Fachquellen werden recherchiert und das Redaktionspaket erstellt.");
-  const pkg = await createEditorialPackage({ plan, config, runKey });
+  const pkg = await createEditorialPackage({
+    plan,
+    config,
+    runKey,
+    topicBrief,
+  });
   console.log("Das textfreie Grundmotiv wird erzeugt.");
   const image = await createBaseImage(pkg.imagePrompt);
   console.log("Das Grundmotiv wird auf ein mögliches Deepfake-Risiko geprüft.");
