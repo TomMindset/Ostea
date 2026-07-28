@@ -378,8 +378,7 @@ for ($index = 0; $index -lt $slides.Count; $index += 1) {
         position = $position
         altText = "OSTEA-Carousel-Folie $position`: $($slide.title). $($slide.text)"
         expectedText = @(
-            ("{0:D2}" -f $position),
-            "OSTEA IMPULS",
+            ("{0:D2}  ·  OSTEA IMPULS" -f $position),
             [string]$slide.title,
             [string]$slide.text,
             "ostea.de"
