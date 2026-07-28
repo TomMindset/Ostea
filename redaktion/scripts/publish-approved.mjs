@@ -572,6 +572,15 @@ async function prepare() {
   const candidate = result.candidate;
   if (!candidate) {
     console.log("Keine freigegebene Veröffentlichung wartet.");
+    for (const item of result.queue ?? []) {
+      console.log(
+        `Redaktionslauf ${item.runKey}: Status ${item.status}; finale Dateien Website/Facebook/Instagram ` +
+          `${item.mediaReadiness?.website ? "ja" : "nein"}/` +
+          `${item.mediaReadiness?.facebook ? "ja" : "nein"}/` +
+          `${item.mediaReadiness?.instagram ? "ja" : "nein"}; ` +
+          `automatisch bereit ${item.automaticPublicationReady ? "ja" : "nein"}.`,
+      );
+    }
     await githubOutput("should_publish", "false");
     return;
   }
