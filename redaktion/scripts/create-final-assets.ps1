@@ -165,7 +165,7 @@ try {
         finally {
             $graphics.Dispose()
         }
-        Save-Jpeg -Bitmap $websiteBitmap -Path $websiteClean -Quality 90
+        Save-Jpeg -Bitmap $websiteBitmap -Path $websiteClean -Quality 72
     }
     finally {
         $websiteBitmap.Dispose()
@@ -230,7 +230,7 @@ try {
         finally {
             $graphics.Dispose()
         }
-        Save-Jpeg -Bitmap $facebookBitmap -Path $facebookClean -Quality 90
+        Save-Jpeg -Bitmap $facebookBitmap -Path $facebookClean -Quality 72
     }
     finally {
         $facebookBitmap.Dispose()
@@ -364,7 +364,7 @@ for ($index = 0; $index -lt $slides.Count; $index += 1) {
         finally {
             $graphics.Dispose()
         }
-        Save-Jpeg -Bitmap $bitmap -Path $cleanPath -Quality 91
+        Save-Jpeg -Bitmap $bitmap -Path $cleanPath -Quality 76
     }
     finally {
         $bitmap.Dispose()
@@ -400,5 +400,13 @@ $manifestJson = $manifest | ConvertTo-Json -Depth 8
     [System.Text.UTF8Encoding]::new($false)
 )
 
+$totalAssetBytes = ($assets | ForEach-Object {
+    (Get-Item -LiteralPath (Join-Path $outputRoot $_.fileName)).Length
+} | Measure-Object -Sum).Sum
+if ($totalAssetBytes -gt 8 * 1024 * 1024) {
+    throw "Das Paket der finalen Kanalbilder überschreitet 8 MB."
+}
+
 Write-Output "Finale Medien erstellt: $($assets.Count)"
+Write-Output ("Gesamtgröße: {0:N2} MB" -f ($totalAssetBytes / 1MB))
 Write-Output "Manifest: $manifestFile"

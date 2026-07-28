@@ -115,7 +115,7 @@ try {
         $encoderParameters.Param[0] =
             [System.Drawing.Imaging.EncoderParameter]::new(
                 [System.Drawing.Imaging.Encoder]::Quality,
-                [long]95
+                [long]76
             )
         try {
             $bitmap.Save($resolvedOutput, $jpegEncoder, $encoderParameters)
