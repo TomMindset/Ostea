@@ -8,9 +8,6 @@ import {
 import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 
-const PORTAL_URL = requiredEnv("OSTEA_PORTAL_URL").replace(/\/+$/, "");
-const TRIGGER_SECRET = requiredEnv("OSTEA_WEEKLY_TRIGGER_SECRET");
-const OPENAI_API_KEY = requiredEnv("OPENAI_API_KEY");
 const TEXT_MODEL = process.env.OPENAI_TEXT_MODEL?.trim() || "gpt-5.6";
 const SITE_ORIGIN = "https://ostea.de";
 const ROOT = resolve(".");
@@ -179,10 +176,11 @@ async function visuallyVerifyFinalAsset(asset, bytes, info) {
 nicht angeschnitten und innerhalb der finalen Bildpixel sichtbar sein.`
     : `Das Bild ist laut Freigabedatensatz nicht KI-generiert und benötigt
 keinen KI-Hinweis. Prüfe dennoch, ob die Datei vollständig und visuell nutzbar ist.`;
+  const openaiApiKey = requiredEnv("OPENAI_API_KEY");
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${OPENAI_API_KEY}`,
+      Authorization: `Bearer ${openaiApiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -257,11 +255,13 @@ eindeutig erfüllt ist.`,
 }
 
 async function portalJson(path, init = {}) {
-  const response = await fetch(`${PORTAL_URL}${path}`, {
+  const portalUrl = requiredEnv("OSTEA_PORTAL_URL").replace(/\/+$/, "");
+  const triggerSecret = requiredEnv("OSTEA_WEEKLY_TRIGGER_SECRET");
+  const response = await fetch(`${portalUrl}${path}`, {
     ...init,
     headers: {
       Accept: "application/json",
-      Authorization: `Bearer ${TRIGGER_SECRET}`,
+      Authorization: `Bearer ${triggerSecret}`,
       ...(init.body ? { "Content-Type": "application/json" } : {}),
       ...(init.headers || {}),
     },
@@ -277,8 +277,7 @@ async function portalJson(path, init = {}) {
   return body;
 }
 
-function articleMetadata(candidate, slug, heroFile) {
-  const publishedAt = candidate.decidedAt || new Date().toISOString();
+function articleMetadata(candidate, slug, heroFile, publishedAt) {
   return {
     reviewId: candidate.reviewId,
     runKey: candidate.runKey,
@@ -391,7 +390,7 @@ function renderArticle(candidate, metadata) {
           <ul>
             <li><a href="../../#fuer-wen">Für wen</a></li>
             <li><a href="../../#leistungen">Leistungen</a></li>
-            <li><a href="../../#wissen">Wissen</a></li>
+            <li><a href="/wissen/">Wissen</a></li>
             <li><a href="../../#kontakt">Kontakt</a></li>
           </ul>
         </nav>
@@ -401,7 +400,7 @@ function renderArticle(candidate, metadata) {
       <nav class="breadcrumb" aria-label="Brotkrumen">
         <ol>
           <li><a href="../../">Startseite</a></li>
-          <li><a href="../../#wissen">Wissen</a></li>
+          <li><a href="/wissen/">Wissen</a></li>
           <li aria-current="page">${html(candidate.title)}</li>
         </ol>
       </nav>
@@ -480,21 +479,22 @@ async function readArticleMetadata() {
         // Andere Dateien im Wissen-Verzeichnis werden nicht verändert.
       }
     }
-    return records.sort(
-      (left, right) =>
+    return records.sort((left, right) => {
+      const dateDifference =
         new Date(right.publishedAt).getTime() -
-        new Date(left.publishedAt).getTime(),
-    );
+        new Date(left.publishedAt).getTime();
+      return (
+        dateDifference ||
+        String(left.title).localeCompare(String(right.title), "de")
+      );
+    });
   } catch {
     return [];
   }
 }
 
-function renderHomepageSection(records) {
-  const cards = records
-    .slice(0, 6)
-    .map(
-      (record) => `
+function renderKnowledgeCard(record) {
+  return `
           <article class="wissen-card">
             <a class="wissen-card-image" href="/wissen/${html(record.slug)}/">
               <img src="/wissen/${html(record.slug)}/${html(record.heroFile)}" alt="${html(record.heroAlt)}" loading="lazy">
@@ -505,9 +505,12 @@ function renderHomepageSection(records) {
               <p>${html(record.summary)}</p>
               <span>${html(formatDate(record.publishedAt))} · ${html(record.audience)}</span>
             </div>
-          </article>`,
-    )
-    .join("\n");
+          </article>`;
+}
+
+function renderHomepageSection(records) {
+  const visibleRecords = records.slice(0, 3);
+  const cards = visibleRecords.map(renderKnowledgeCard).join("\n");
   return `<!-- OSTEA_WISSEN_START -->
       <section id="wissen" class="band wissen-home" aria-labelledby="wissen-title">
         <div class="section-inner">
@@ -518,14 +521,17 @@ function renderHomepageSection(records) {
             </div>
             <p>Wissenschaftlich und naturheilkundlich eingeordnete Gesundheitstipps für Mütter, Kinder und ältere Menschen – verständlich, praktisch und ohne Heilversprechen.</p>
           </div>
-          <div class="wissen-grid">${cards}
+          <div class="wissen-grid wissen-grid--home wissen-grid--${visibleRecords.length}">${cards}
+          </div>
+          <div class="wissen-home-actions">
+            <a class="button secondary" href="/wissen/">Alle Wissensartikel</a>
           </div>
         </div>
       </section>
       <!-- OSTEA_WISSEN_END -->`;
 }
 
-async function updateHomepage() {
+async function updateHomepage(records) {
   const path = join(ROOT, "index.html");
   let source = await readFile(path, "utf8");
   if (!source.includes('href="assets/wissen.css"')) {
@@ -534,13 +540,14 @@ async function updateHomepage() {
       '    <link rel="stylesheet" href="assets/wissen.css">\n  </head>',
     );
   }
-  if (!source.includes('href="#wissen"')) {
+  source = source.replaceAll('href="#wissen"', 'href="/wissen/"');
+  if (!source.includes('href="/wissen/"')) {
     source = source.replace(
       '<li><a href="#kontakt">Kontakt</a></li>',
-      '<li><a href="#wissen">Wissen</a></li>\n            <li><a href="#kontakt">Kontakt</a></li>',
+      '<li><a href="/wissen/">Wissen</a></li>\n            <li><a href="#kontakt">Kontakt</a></li>',
     );
   }
-  const section = renderHomepageSection(await readArticleMetadata());
+  const section = renderHomepageSection(records);
   const marker =
     /<!-- OSTEA_WISSEN_START -->[\s\S]*?<!-- OSTEA_WISSEN_END -->/;
   if (marker.test(source)) {
@@ -554,24 +561,164 @@ async function updateHomepage() {
   await writeFile(path, source, "utf8");
 }
 
+function renderKnowledgeIndex(records) {
+  const description =
+    "Alle OSTEA Wissensartikel zu Gesundheit, Osteopathie und alltagstauglicher Unterstützung – verständlich eingeordnet und ohne Heilversprechen.";
+  const cards = records.map(renderKnowledgeCard).join("\n");
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "OSTEA Wissen",
+    description,
+    url: `${SITE_ORIGIN}/wissen/`,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: records.map((record, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: record.url,
+        name: record.title,
+      })),
+    },
+  };
+  const newest = records[0];
+
+  return `<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OSTEA Wissen | Gesundheit verständlich eingeordnet</title>
+    <meta name="description" content="${html(description)}">
+    <link rel="canonical" href="${SITE_ORIGIN}/wissen/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="OSTEA Wissen">
+    <meta property="og:description" content="${html(description)}">
+    <meta property="og:url" content="${SITE_ORIGIN}/wissen/">
+    ${newest ? `<meta property="og:image" content="${html(newest.url)}${html(newest.heroFile)}">` : ""}
+    <link rel="stylesheet" href="../assets/symptom-pages.css">
+    <link rel="stylesheet" href="../assets/wissen.css">
+    <script type="application/ld+json">${jsonForHtml(schema)}</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#inhalt">Direkt zum Inhalt</a>
+    <header>
+      <div class="nav">
+        <a class="brand" href="../">
+          <img src="../assets/ostea-logo.jpg" alt="OSTEA Logo" width="46" height="46">
+          <span><strong>OSTEA</strong><span>Praxis für Osteopathie</span></span>
+        </a>
+        <nav aria-label="Hauptnavigation">
+          <ul>
+            <li><a href="../#fuer-wen">Für wen</a></li>
+            <li><a href="../#leistungen">Leistungen</a></li>
+            <li><a href="/wissen/" aria-current="page">Wissen</a></li>
+            <li><a href="../#kontakt">Kontakt</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main id="inhalt">
+      <nav class="breadcrumb" aria-label="Brotkrumen">
+        <ol>
+          <li><a href="../">Startseite</a></li>
+          <li aria-current="page">Wissen</li>
+        </ol>
+      </nav>
+      <div class="wissen-overview-hero">
+        <p class="eyebrow">Wissen für den Alltag</p>
+        <h1>OSTEA Wissen</h1>
+        <p class="lead">Gesundheitliche Zusammenhänge verständlich einordnen, praktische Impulse mitnehmen und Grenzen erkennen – wissenschaftlich und naturheilkundlich betrachtet.</p>
+      </div>
+      <section class="wissen-overview" aria-labelledby="wissen-articles-title">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Neueste zuerst</p>
+            <h2 id="wissen-articles-title">Alle Wissensartikel</h2>
+          </div>
+          <p>${records.length === 1 ? "Ein fundierter Beitrag" : `${records.length} fundierte Beiträge`} für Mütter, Kinder, ältere Menschen und alle, die ihren Körper besser verstehen möchten.</p>
+        </div>
+        <div class="wissen-grid wissen-grid--archive">${cards}
+        </div>
+      </section>
+      <section class="article-cta">
+        <div>
+          <p class="eyebrow">OSTEA in Waiblingen</p>
+          <h2>Sie möchten Ihr Anliegen persönlich besprechen?</h2>
+          <p>Sonja Hoffmann begleitet Mütter, Kinder und ältere Menschen osteopathisch und naturheilkundlich – individuell und ohne Heilversprechen.</p>
+        </div>
+        <a class="button" href="https://calendly.com/ostea/60min" target="_blank" rel="noopener">Termin buchen</a>
+      </section>
+    </main>
+    <footer>
+      <div class="footer-inner">
+        <span>&copy; OSTEA – Praxis für Osteopathie, Sonja Hoffmann</span>
+        <div class="footer-links">
+          <a href="../#impressum">Impressum</a>
+          <a href="../#datenschutz">Datenschutz</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+`;
+}
+
+async function updateKnowledgeIndex(records) {
+  const directory = join(ROOT, "wissen");
+  await mkdir(directory, { recursive: true });
+  await writeFile(
+    join(directory, "index.html"),
+    renderKnowledgeIndex(records),
+    "utf8",
+  );
+}
+
 async function updateSitemap(metadata) {
   const path = join(ROOT, "sitemap.xml");
   let source = await readFile(path, "utf8");
   const lastmod = metadata.publishedAt.slice(0, 10);
-  const entry = `  <url>
-    <loc>${metadata.url}</loc>
+  const entries = [
+    {
+      url: `${SITE_ORIGIN}/wissen/`,
+      changefreq: "weekly",
+      priority: "0.8",
+    },
+    {
+      url: metadata.url,
+      changefreq: "monthly",
+      priority: "0.7",
+    },
+  ];
+  for (const item of entries) {
+    const entry = `  <url>
+    <loc>${item.url}</loc>
     <lastmod>${lastmod}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <changefreq>${item.changefreq}</changefreq>
+    <priority>${item.priority}</priority>
   </url>`;
-  const escapedUrl = metadata.url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const existing = new RegExp(
-    `  <url>\\s*<loc>${escapedUrl}<\\/loc>[\\s\\S]*?<\\/url>`,
-  );
-  source = existing.test(source)
-    ? source.replace(existing, entry)
-    : source.replace("</urlset>", `${entry}\n</urlset>`);
+    const escapedUrl = item.url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const existing = new RegExp(
+      `  <url>\\s*<loc>${escapedUrl}<\\/loc>[\\s\\S]*?<\\/url>`,
+    );
+    source = existing.test(source)
+      ? source.replace(existing, entry)
+      : source.replace("</urlset>", `${entry}\n</urlset>`);
+  }
   await writeFile(path, source, "utf8");
+}
+
+async function refreshKnowledgePages() {
+  const records = await readArticleMetadata();
+  if (records.length === 0) {
+    throw new Error("Es sind noch keine veröffentlichten Wissensartikel vorhanden.");
+  }
+  await updateHomepage(records);
+  await updateKnowledgeIndex(records);
+  await updateSitemap(records[0]);
+  console.log(
+    `Wissen-Startseite und Übersicht wurden aus ${records.length} Artikel${records.length === 1 ? "" : "n"} neu aufgebaut.`,
+  );
 }
 
 async function prepare() {
@@ -671,12 +818,25 @@ async function prepare() {
       throw new Error("Das freigegebene Website-Titelbild fehlt.");
     }
     const websiteFile = downloaded.get(websiteAsset.id);
-    const slug = `${berlinCalendarDay(candidate.decidedAt || new Date())}-${slugify(candidate.title)}`;
+    const existingMetadata = (await readArticleMetadata()).find(
+      (record) => record.reviewId === candidate.reviewId,
+    );
+    const publishedAt =
+      existingMetadata?.publishedAt || new Date().toISOString();
+    const slug =
+      existingMetadata?.slug ||
+      `${berlinCalendarDay(publishedAt)}-${slugify(candidate.title)}`;
     const articleDirectory = join(ROOT, "wissen", slug);
     await mkdir(articleDirectory, { recursive: true });
-    const heroFile = `hero.${websiteFile.info.extension}`;
+    const heroFile =
+      existingMetadata?.heroFile || `hero.${websiteFile.info.extension}`;
     await writeFile(join(articleDirectory, heroFile), websiteFile.bytes);
-    const metadata = articleMetadata(candidate, slug, heroFile);
+    const metadata = articleMetadata(
+      candidate,
+      slug,
+      heroFile,
+      publishedAt,
+    );
     await writeFile(
       join(articleDirectory, "index.html"),
       renderArticle(candidate, metadata),
@@ -687,7 +847,9 @@ async function prepare() {
       `${JSON.stringify(metadata, null, 2)}\n`,
       "utf8",
     );
-    await updateHomepage();
+    const records = await readArticleMetadata();
+    await updateHomepage(records);
+    await updateKnowledgeIndex(records);
     await updateSitemap(metadata);
     websiteUrl = metadata.url;
   } else {
@@ -846,7 +1008,10 @@ async function main() {
   if (command === "prepare") return prepare();
   if (command === "wait") return waitForWebsite();
   if (command === "dispatch") return dispatch();
-  throw new Error("Unterbefehl muss prepare, wait oder dispatch sein.");
+  if (command === "refresh") return refreshKnowledgePages();
+  throw new Error(
+    "Unterbefehl muss prepare, refresh, wait oder dispatch sein.",
+  );
 }
 
 main().catch((error) => {

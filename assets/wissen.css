@@ -9,7 +9,18 @@
   gap: 18px;
 }
 
+.wissen-grid--1 {
+  grid-template-columns: minmax(0, 720px);
+}
+
+.wissen-grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 900px;
+}
+
 .wissen-card {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   background: var(--white);
   border: 1px solid var(--line);
@@ -29,6 +40,9 @@
 }
 
 .wissen-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   padding: 22px;
 }
 
@@ -55,8 +69,35 @@
 
 .wissen-card-body > span {
   display: block;
-  margin-top: 18px;
+  margin-top: auto;
+  padding-top: 18px;
   font-size: 0.86rem;
+}
+
+.wissen-home-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.wissen-overview-hero,
+.wissen-overview {
+  width: min(100% - 32px, var(--max));
+  margin: 0 auto;
+}
+
+.wissen-overview-hero {
+  max-width: 840px;
+  margin-left: max(16px, calc((100% - var(--max)) / 2));
+  padding: 58px 0 48px;
+}
+
+.wissen-overview-hero .lead {
+  color: var(--muted);
+}
+
+.wissen-overview {
+  padding-bottom: 72px;
 }
 
 .article-hero,
@@ -204,10 +245,17 @@
 }
 
 @media (max-width: 900px) {
-  .wissen-grid,
   .article-hero,
   .article-layout {
     grid-template-columns: 1fr;
+  }
+
+  .wissen-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wissen-grid--1 {
+    grid-template-columns: minmax(0, 720px);
   }
 
   .source-panel {
@@ -218,12 +266,30 @@
 @media (max-width: 640px) {
   .article-hero,
   .article-layout,
-  .article-cta {
+  .article-cta,
+  .wissen-overview-hero,
+  .wissen-overview {
     width: min(100% - 24px, var(--max));
+  }
+
+  .wissen-overview-hero {
+    margin-left: auto;
+  }
+
+  .wissen-grid {
+    grid-template-columns: 1fr;
   }
 
   .article-hero {
     padding-top: 38px;
+  }
+
+  .wissen-home-actions {
+    justify-content: stretch;
+  }
+
+  .wissen-home-actions .button {
+    width: 100%;
   }
 
   .article-cta {
