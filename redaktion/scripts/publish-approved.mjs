@@ -577,7 +577,27 @@ async function updateSitemap(metadata) {
 async function prepare() {
   const outputDir = resolve(argument("--output-dir"));
   await mkdir(outputDir, { recursive: true });
-  const result = await portalJson("/api/editorial/publication-candidate");
+  const retryReviewId = argument("--review-id").trim();
+  const retryChannels = argument("--retry-channels")
+    .split(",")
+    .map((channel) => channel.trim())
+    .filter(Boolean);
+  const invalidRetryChannel = retryChannels.find(
+    (channel) => !["facebook", "instagram"].includes(channel),
+  );
+  if (invalidRetryChannel) {
+    throw new Error(
+      `Ungültiger Social-Retry-Kanal: ${invalidRetryChannel}.`,
+    );
+  }
+  if (retryChannels.length > 0 && !retryReviewId) {
+    throw new Error("Social-Retry-Kanäle benötigen eine konkrete Freigabe-ID.");
+  }
+  const confirmManualRetry = hasFlag("--confirm-manual-retry");
+  const candidatePath = retryReviewId
+    ? `/api/editorial/publication-candidate?review_id=${encodeURIComponent(retryReviewId)}`
+    : "/api/editorial/publication-candidate";
+  const result = await portalJson(candidatePath);
   const candidate = result.candidate;
   if (!candidate) {
     console.log("Keine freigegebene Veröffentlichung wartet.");
@@ -598,10 +618,25 @@ async function prepare() {
       "Der freigegebene Social-Media-Lauf hat keinen freigegebenen Website-Artikel.",
     );
   }
+  const selectedChannels =
+    retryChannels.length > 0
+      ? [...new Set(retryChannels)]
+      : candidate.approvedChannels;
+  if (
+    selectedChannels.some(
+      (channel) => !candidate.approvedChannels.includes(channel),
+    )
+  ) {
+    throw new Error(
+      "Ein angeforderter Social-Retry-Kanal wurde nicht freigegeben.",
+    );
+  }
   const manual = (candidate.publications || []).find(
-    (publication) => publication?.status === "manual_check_required",
+    (publication) =>
+      selectedChannels.includes(publication?.channel) &&
+      publication?.status === "manual_check_required",
   );
-  if (manual) {
+  if (manual && !confirmManualRetry) {
     throw new Error(
       `${manual.channel} benötigt nach einem uneindeutigen Meta-Ergebnis eine manuelle Prüfung: ${manual.error || "ohne Detail"}`,
     );
@@ -609,10 +644,10 @@ async function prepare() {
 
   const assets = candidate.payload?.media?.assets ?? [];
   console.log(
-    `Freigegebene Kanäle: ${candidate.approvedChannels.join(", ")}; finale Dateien: ${assets.length}.`,
+    `Auszuführende Kanäle: ${selectedChannels.join(", ")}; finale Dateien: ${assets.length}.`,
   );
   const requiredAssets = assets.filter((asset) =>
-    candidate.approvedChannels.includes(asset.channel),
+    selectedChannels.includes(asset.channel),
   );
   if (requiredAssets.length === 0) {
     throw new Error("Der freigegebene Entwurf enthält keine finalen Kanalbilder.");
@@ -627,38 +662,55 @@ async function prepare() {
     downloaded.set(asset.id, file);
   }
 
-  const websiteAsset = requiredAssets.find(
-    (asset) => asset.channel === "website" && asset.position === 1,
-  );
-  if (!websiteAsset) {
-    throw new Error("Das freigegebene Website-Titelbild fehlt.");
+  let websiteUrl = "";
+  if (selectedChannels.includes("website")) {
+    const websiteAsset = requiredAssets.find(
+      (asset) => asset.channel === "website" && asset.position === 1,
+    );
+    if (!websiteAsset) {
+      throw new Error("Das freigegebene Website-Titelbild fehlt.");
+    }
+    const websiteFile = downloaded.get(websiteAsset.id);
+    const slug = `${berlinCalendarDay(candidate.decidedAt || new Date())}-${slugify(candidate.title)}`;
+    const articleDirectory = join(ROOT, "wissen", slug);
+    await mkdir(articleDirectory, { recursive: true });
+    const heroFile = `hero.${websiteFile.info.extension}`;
+    await writeFile(join(articleDirectory, heroFile), websiteFile.bytes);
+    const metadata = articleMetadata(candidate, slug, heroFile);
+    await writeFile(
+      join(articleDirectory, "index.html"),
+      renderArticle(candidate, metadata),
+      "utf8",
+    );
+    await writeFile(
+      join(articleDirectory, "article.json"),
+      `${JSON.stringify(metadata, null, 2)}\n`,
+      "utf8",
+    );
+    await updateHomepage();
+    await updateSitemap(metadata);
+    websiteUrl = metadata.url;
+  } else {
+    const websitePublication = (candidate.publications || []).find(
+      (publication) =>
+        publication?.channel === "website" &&
+        publication?.status === "published",
+    );
+    websiteUrl = String(websitePublication?.platformObjectId || "").trim();
+    if (!websiteUrl.startsWith("https://")) {
+      throw new Error(
+        "Für den Social-Retry fehlt die bereits veröffentlichte Artikel-URL.",
+      );
+    }
   }
-  const websiteFile = downloaded.get(websiteAsset.id);
-  const slug = `${berlinCalendarDay(candidate.decidedAt || new Date())}-${slugify(candidate.title)}`;
-  const articleDirectory = join(ROOT, "wissen", slug);
-  await mkdir(articleDirectory, { recursive: true });
-  const heroFile = `hero.${websiteFile.info.extension}`;
-  await writeFile(join(articleDirectory, heroFile), websiteFile.bytes);
-  const metadata = articleMetadata(candidate, slug, heroFile);
-  await writeFile(
-    join(articleDirectory, "index.html"),
-    renderArticle(candidate, metadata),
-    "utf8",
-  );
-  await writeFile(
-    join(articleDirectory, "article.json"),
-    `${JSON.stringify(metadata, null, 2)}\n`,
-    "utf8",
-  );
-  await updateHomepage();
-  await updateSitemap(metadata);
 
   const state = {
     reviewId: candidate.reviewId,
     runKey: candidate.runKey,
-    websiteUrl: metadata.url,
+    websiteUrl,
     marker: `OSTEA_WISSEN_REVIEW:${candidate.reviewId}`,
-    approvedChannels: candidate.approvedChannels,
+    approvedChannels: selectedChannels,
+    confirmManualRetry,
     publicationStates: Object.fromEntries(
       (candidate.publications || [])
         .filter(Boolean)
@@ -678,6 +730,13 @@ async function prepare() {
   await githubOutput("should_publish", "true");
   await githubOutput("state_file", statePath);
   await githubOutput("article_url", state.websiteUrl);
+  await githubOutput(
+    "website_pending",
+    String(
+      state.approvedChannels.includes("website") &&
+        state.publicationStates.website !== "published",
+    ),
+  );
   await githubOutput(
     "facebook_pending",
     String(
@@ -742,6 +801,7 @@ async function dispatch() {
           reviewId: state.reviewId,
           websiteUrl: state.websiteUrl,
           channels: [channel],
+          confirmManualRetry: state.confirmManualRetry === true,
         }),
       },
     );

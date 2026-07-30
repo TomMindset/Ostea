@@ -8,6 +8,26 @@ on:
         required: false
         default: false
         type: boolean
+      retry_review_id:
+        description: "Konkrete Freigabe-ID für einen bestätigten Social-Retry"
+        required: false
+        default: ""
+        type: string
+      retry_channels:
+        description: "Social-Kanäle für den Retry, kommagetrennt"
+        required: false
+        default: ""
+        type: string
+      confirm_manual_retry:
+        description: "Manuelle Prüfung ohne vorhandene Meta-Objekt-ID bestätigen"
+        required: false
+        default: false
+        type: boolean
+      skip_offsets:
+        description: "Bereits abgelaufene Social-Abstände beim Retry auslassen"
+        required: false
+        default: false
+        type: boolean
   schedule:
     - cron: "*/15 9-10 * * 1-5"
       timezone: "Europe/Berlin"
@@ -59,10 +79,25 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
+          RETRY_REVIEW_ID: ${{ inputs.retry_review_id }}
+          RETRY_CHANNELS: ${{ inputs.retry_channels }}
+          CONFIRM_MANUAL_RETRY: ${{ inputs.confirm_manual_retry }}
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          node redaktion/scripts/publish-approved.mjs prepare \
-            --output-dir "$RUNNER_TEMP/ostea-publication" \
-            ${{ inputs.dry_run && '--dry-run' || '' }}
+          args=(prepare --output-dir "$RUNNER_TEMP/ostea-publication")
+          if [ "$DRY_RUN" = "true" ]; then
+            args+=(--dry-run)
+          fi
+          if [ -n "$RETRY_REVIEW_ID" ]; then
+            args+=(--review-id "$RETRY_REVIEW_ID")
+          fi
+          if [ -n "$RETRY_CHANNELS" ]; then
+            args+=(--retry-channels "$RETRY_CHANNELS")
+          fi
+          if [ "$CONFIRM_MANUAL_RETRY" = "true" ]; then
+            args+=(--confirm-manual-retry)
+          fi
+          node redaktion/scripts/publish-approved.mjs "${args[@]}"
 
       - name: Confirm the dry run
         if: steps.prepare.outputs.should_publish == 'true' && inputs.dry_run
@@ -71,7 +106,7 @@ jobs:
 
       - name: Commit the approved website article
         id: website
-        if: steps.prepare.outputs.should_publish == 'true' && !inputs.dry_run
+        if: steps.prepare.outputs.website_pending == 'true' && !inputs.dry_run
         shell: bash
         run: |
           git config user.name "OSTEA Publishing"
@@ -87,7 +122,7 @@ jobs:
           fi
 
       - name: Wait until the exact approved article is public
-        if: steps.prepare.outputs.should_publish == 'true' && !inputs.dry_run
+        if: steps.prepare.outputs.website_pending == 'true' && !inputs.dry_run
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
@@ -96,7 +131,7 @@ jobs:
             --state "${{ steps.prepare.outputs.state_file }}"
 
       - name: Record the website publication
-        if: steps.prepare.outputs.should_publish == 'true' && !inputs.dry_run
+        if: steps.prepare.outputs.website_pending == 'true' && !inputs.dry_run
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OSTEA_WEEKLY_TRIGGER_SECRET: ${{ secrets.OSTEA_WEEKLY_TRIGGER_SECRET }}
@@ -106,7 +141,7 @@ jobs:
             --channel website
 
       - name: Keep the approved Facebook offset
-        if: steps.prepare.outputs.facebook_pending == 'true' && !inputs.dry_run
+        if: steps.prepare.outputs.facebook_pending == 'true' && !inputs.dry_run && !inputs.skip_offsets
         run: sleep 900
 
       - name: Publish the approved Facebook teaser and final image
@@ -120,7 +155,7 @@ jobs:
             --channel facebook
 
       - name: Keep the approved Instagram offset
-        if: steps.prepare.outputs.instagram_pending == 'true' && !inputs.dry_run
+        if: steps.prepare.outputs.instagram_pending == 'true' && !inputs.dry_run && !inputs.skip_offsets
         shell: bash
         run: |
           if [ "${{ steps.prepare.outputs.facebook_pending }}" = "true" ]; then
