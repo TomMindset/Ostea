@@ -448,6 +448,17 @@
         justify-self: center;
       }
 
+      .practice-video {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border: 0;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        background: var(--deep);
+        object-fit: cover;
+      }
+
       .practice-placeholder {
         position: relative;
         display: grid;
@@ -1130,13 +1141,17 @@
       <section id="ueber-mich" aria-labelledby="ueber-title">
         <div class="section-inner split reverse">
           <figure class="practice-video-frame">
-            <div class="practice-placeholder" aria-labelledby="video-placeholder-title">
-              <img src="assets/praxisrundgang-ostea-waiblingen-poster.jpg" alt="" width="848" height="478" loading="lazy">
-              <div class="practice-placeholder-content">
-                <span class="practice-placeholder-icon" aria-hidden="true">&#9654;</span>
-                <strong id="video-placeholder-title">Neues Praxisvideo folgt in K&uuml;rze</strong>
-              </div>
-            </div>
+            <video
+              class="practice-video"
+              controls
+              playsinline
+              preload="metadata"
+              poster="assets/praxisrundgang-ostea-waiblingen-poster.jpg"
+              aria-label="Praxisrundgang durch die OSTEA Praxis in Waiblingen"
+            >
+              <source src="assets/praxisrundgang-ostea-waiblingen.mp4" type="video/mp4">
+              Ihr Browser unterst&uuml;tzt die Wiedergabe dieses Videos nicht.
+            </video>
             <figcaption>Ein Blick in die OSTEA Praxis in Waiblingen</figcaption>
           </figure>
           <div>
