@@ -55,6 +55,12 @@ function html(value) {
     .replaceAll("'", "&#39;");
 }
 
+function publicAudience(value) {
+  return String(value ?? "")
+    .replace(/\s*[.!?]?\s*Suchintention\s*:[\s\S]*$/iu, "")
+    .trim();
+}
+
 function jsonForHtml(value) {
   return JSON.stringify(value).replaceAll("<", "\\u003c");
 }
@@ -284,7 +290,7 @@ function articleMetadata(candidate, slug, heroFile, publishedAt) {
     slug,
     url: `${SITE_ORIGIN}/wissen/${slug}/`,
     title: candidate.title,
-    audience: candidate.audience,
+    audience: publicAudience(candidate.audience),
     summary: candidate.payload.summary,
     intro: candidate.payload.article.intro,
     eyebrow: candidate.payload.article.eyebrow,
@@ -410,7 +416,7 @@ function renderArticle(candidate, metadata) {
             <p class="eyebrow">${html(article.eyebrow || "OSTEA Wissen")}</p>
             <h1>${html(candidate.title)}</h1>
             <p class="lead">${html(article.intro)}</p>
-            <p class="article-meta">Für ${html(candidate.audience)} · veröffentlicht am ${html(formatDate(metadata.publishedAt))}</p>
+            <p class="article-meta">Für ${html(metadata.audience)} · veröffentlicht am ${html(formatDate(metadata.publishedAt))}</p>
           </div>
           <figure class="article-image">
             <img src="${html(metadata.heroFile)}" alt="${html(metadata.heroAlt)}" width="1200" height="800">
@@ -494,15 +500,17 @@ async function readArticleMetadata() {
 }
 
 function renderKnowledgeCard(record) {
+  const articleUrl = `/wissen/${html(record.slug)}/`;
   return `
           <article class="wissen-card">
-            <a class="wissen-card-image" href="/wissen/${html(record.slug)}/">
+            <a class="wissen-card-image" href="${articleUrl}">
               <img src="/wissen/${html(record.slug)}/${html(record.heroFile)}" alt="${html(record.heroAlt)}" loading="lazy">
             </a>
             <div class="wissen-card-body">
               <p class="eyebrow">${html(record.eyebrow || "OSTEA Wissen")}</p>
-              <h3><a href="/wissen/${html(record.slug)}/">${html(record.title)}</a></h3>
+              <h3><a href="${articleUrl}">${html(record.title)}</a></h3>
               <p>${html(record.summary)}</p>
+              <a class="wissen-card-more" href="${articleUrl}" aria-label="Weiterlesen: ${html(record.title)}">Weiterlesen</a>
               <span>${html(formatDate(record.publishedAt))} · ${html(record.audience)}</span>
             </div>
           </article>`;
