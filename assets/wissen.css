@@ -58,13 +58,40 @@
 .wissen-card-body h3 a:hover,
 .wissen-card-body h3 a:focus {
   text-decoration: underline;
-  text-decoration-color: var(--accent);
+  text-decoration-color: var(--accent, var(--teal, #78c4f6));
   text-underline-offset: 4px;
 }
 
 .wissen-card-body > p:not(.eyebrow),
 .wissen-card-body > span {
   color: var(--muted);
+}
+
+.wissen-card-more {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 0.45rem;
+  margin-top: 14px;
+  padding: 8px 12px;
+  color: var(--ink);
+  background: var(--mist);
+  border-left: 3px solid var(--accent, var(--teal, #78c4f6));
+  border-radius: 6px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.wissen-card-more::after {
+  content: "\2192";
+}
+
+.wissen-card-more:hover,
+.wissen-card-more:focus {
+  color: var(--white);
+  background: var(--ink);
+  transform: translateX(2px);
 }
 
 .wissen-card-body > span {
